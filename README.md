@@ -8,6 +8,11 @@ addresses.
 Very simple: a series of URLs for GET requests is defined and
 queried. the results are stored in a JSON data file.
 
+## Requirements
+- Python 3 installed
+- Module requirements are resolved by **setup.py**
+- Internet connection for setup
+
 ## Installation
 The tool is a simple Python 3 module it can be installed
 manually into the local Python 3 environment by switching to
@@ -59,7 +64,7 @@ Every execution adds to the URL-named lists. The result codes are:
 |------|-------------|
 | SUCCESS | All good |
 | EXCEPTION_ERROR | Some thing in the environment went wrong, like network or system unavailable. |
-| APPLICATION_ERROR | Service is there, but could not respond error free to the request |
+| APPLICATION_ERROR | Service is there, but could not respond error-free to the request |
 The rest of the entries is self-explanatory.
 
 ```javascript
@@ -68,21 +73,21 @@ The rest of the entries is self-explanatory.
         {
             "message": "HTTPConnectionPool(host='invalid.url.io', port=80):",
             "result": "EXCEPTION_ERROR",
-            "time": "2018-08-17 11:16:53.259895"
+            "time": "2018-07-17 00:16:53.259895"
         }
     ],
-    "https://www.isc-kiwi.de": [
+    "https://some-valid-url": [
         {
             "message": "OK",
             "result": "SUCCESS",
-            "time": "2018-08-17 11:16:45.709041"
+            "time": "2018-07-17 00:16:45.709041"
         }
     ],
-    "https://www.isc-kiwi.de/invalid-file.html": [
+    "https://some-valid-url/invalid-file.html": [
         {
             "message": 404,
             "result": "APPLICATION_ERROR",
-            "time": "2018-08-17 11:16:55.263712"
+            "time": "2018-07-17 00:16:55.263712"
         }
     ]
 }
