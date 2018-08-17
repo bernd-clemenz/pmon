@@ -1,5 +1,6 @@
 #
 # methods to del with a process list
+# (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 
 

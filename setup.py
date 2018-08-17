@@ -13,10 +13,10 @@ setuptools.setup(
     version="0.0.1",
     author="ISC Clemenz & Weinbrecht GmbH",
     author_email="info@isc-software.de",
-    description="a very simple process monitor",
+    description="A very simple HTTP process monitor",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/bernd-clemenz/pmon",
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",

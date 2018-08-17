@@ -9,7 +9,7 @@ Very simple: a series of URLs for GET requests is defined and
 queried. the results are stored in a JSON data file.
 
 ## Requirements
-- Python 3 installed
+- Python 3 installed. [Python](http://www.python.org)
 - Module requirements are resolved by **setup.py**
 - Internet connection for setup
 
@@ -54,7 +54,7 @@ number, unique to the section.
     data.file = pmon.json
 
     [urls]
-    url.1 = https://www.isc-kiwi.de
+    url.1 = https://some-valid-url.io
     url.2 = http://invalid.url.io
     
 ## Result
@@ -76,14 +76,14 @@ The rest of the entries is self-explanatory.
             "time": "2018-07-17 00:16:53.259895"
         }
     ],
-    "https://some-valid-url": [
+    "https://some-valid-url.io": [
         {
             "message": "OK",
             "result": "SUCCESS",
             "time": "2018-07-17 00:16:45.709041"
         }
     ],
-    "https://some-valid-url/invalid-file.html": [
+    "https://some-valid-url.io/invalid-file.html": [
         {
             "message": 404,
             "result": "APPLICATION_ERROR",
