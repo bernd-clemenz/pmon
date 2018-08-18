@@ -25,7 +25,7 @@ setuptools.setup(
     ),
     install_requires=(
         "argparse",
-        "configparser",
-        "requests"
+        "requests",
+        "paramiko"
     ),
 )

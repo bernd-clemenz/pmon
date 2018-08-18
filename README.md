@@ -6,7 +6,8 @@ addresses.
 
 ## Method
 Very simple: a series of URLs for GET requests is defined and
-queried. the results are stored in a JSON data file.
+queried. The results are stored in a JSON data file. This file
+is updated in subsequent executions.
 
 ## Requirements
 - Python 3 installed. [Python](http://www.python.org)
@@ -48,6 +49,17 @@ A dynamic section where the URLs for GET access are configured.
 The entries follow the pattern **url.XX** where XX is a
 number, unique to the section.
 
+### Section 'remote'
+This section contains sets keys prefixed with url-identifiers.
+
+| Name | Description |
+|------|-------------|
+| url.ID.user | Name of a remote user |
+| url.ID.pwd | Password |
+| url.ID.process | string to search in command result |
+| url.ID.scan_cmd | command to produce process list |
+| url.ID.type | **ssh** only supported type in version 0.0.1 |
+
 ### Example
     [pmon]
     id=isc_001
@@ -57,6 +69,13 @@ number, unique to the section.
     url.1 = https://some-valid-url.io
     url.2 = http://invalid.url.io
     
+    [remote]
+    url.4.user = pi
+    url.4.pwd = raspberry
+    url.4.process = python com_srv.py
+    url.4.scan_cmd = sudo ps aux
+    url.4.type = ssh
+    
 ## Result
 Every execution adds to the URL-named lists. The result codes are:
 
@@ -65,7 +84,7 @@ Every execution adds to the URL-named lists. The result codes are:
 | SUCCESS | All good |
 | EXCEPTION_ERROR | Some thing in the environment went wrong, like network or system unavailable. |
 | APPLICATION_ERROR | Service is there, but could not respond error-free to the request |
-The rest of the entries is self-explanatory.
+The rest of the entries are self-explanatory.
 
 ```javascript
 {
@@ -92,3 +111,11 @@ The rest of the entries is self-explanatory.
     ]
 }
 ```
+
+## Remote operations
+The module can also perform some simple remote data digging, if access is configured.
+For more complex things it's recommended to use tools like [Salt](http://www.saltstack.com).
+
+## Additional sources
+* [Paramiko](http://www.paramiko.org/)
+* [Requests](http://docs.python-requests.org/en/master/)

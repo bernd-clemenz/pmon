@@ -5,10 +5,11 @@
 
 import argparse
 import datetime
+import json
 import logging
 import logging.handlers
-import json
 import os
+import pmon.prc
 import requests
 import sys
 if sys.version_info.major == 3:
@@ -79,6 +80,9 @@ def check_url(cfg_name):
             LOG.warning("Check failed with status: " + str(rsp.status_code))
             record['result'] = 'APPLICATION_ERROR'
             record['message'] = rsp.status_code
+            # perform additional operations
+            pmon.prc.check_for_process(CFG, LOG, cfg_name, record)
+
     except Exception as x:
         LOG.error("Check failed due: " + str(x))
         record['result'] = 'EXCEPTION_ERROR'
