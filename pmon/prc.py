@@ -6,12 +6,12 @@ import urllib.parse
 from paramiko import client
 
 
-def ssh_command(log, client, command):
-    if not client:
+def ssh_command(log, clnt, command):
+    if not clnt:
         log.error('No connected')
         return None
 
-    stdin, stdout, stderr = client.exec_command(command)
+    stdin, stdout, stderr = clnt.exec_command(command)
     while not stdout.channel.exit_status_ready():
         if stdout.channel.recv_ready():
             alldata = stdout.channel.recv(1024)

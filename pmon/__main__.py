@@ -82,7 +82,6 @@ def check_url(cfg_name):
             record['message'] = rsp.status_code
             # perform additional operations
             pmon.prc.check_for_process(CFG, LOG, cfg_name, record)
-
     except Exception as x:
         LOG.error("Check failed due: " + str(x))
         record['result'] = 'EXCEPTION_ERROR'
@@ -101,7 +100,7 @@ def save_data():
     LOG.info('Writing result data')
     if len(DATA) > 0:
         with open(CFG['pmon']['data.file'], 'w') as f:
-            f.write(json.dumps(DATA, indent=4, sort_keys=True, default=datetime_converter))
+            f.write(json.dumps(DATA, indent=2, sort_keys=True, default=datetime_converter))
 
 
 if __name__ == '__main__':

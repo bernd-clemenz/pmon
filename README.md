@@ -54,11 +54,11 @@ This section contains sets keys prefixed with url-identifiers.
 
 | Name | Description |
 |------|-------------|
-| url.ID.user | Name of a remote user |
-| url.ID.pwd | Password |
-| url.ID.process | string to search in command result |
-| url.ID.scan_cmd | command to produce process list |
-| url.ID.type | **ssh** only supported type in version 0.0.1 |
+| url.XX.user | Name of a remote user |
+| url.XX.pwd | Password |
+| url.XX.process | string to search in command result |
+| url.XX.scan_cmd | command to produce process list |
+| url.XX.type | **ssh** only supported type in version 0.0.1 |
 
 ### Example
     [pmon]
@@ -82,7 +82,7 @@ Every execution adds to the URL-named lists. The result codes are:
 | Code | Description |
 |------|-------------|
 | SUCCESS | All good |
-| EXCEPTION_ERROR | Some thing in the environment went wrong, like network or system unavailable. |
+| EXCEPTION_ERROR | Something in the environment went wrong, like network or system unavailable. |
 | APPLICATION_ERROR | Service is there, but could not respond error-free to the request |
 The rest of the entries are self-explanatory.
 
