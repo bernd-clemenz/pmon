@@ -1,5 +1,5 @@
 #
-# methods to deal with a process list
+# Methods to deal with a process list
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 import urllib.parse
@@ -8,7 +8,7 @@ from paramiko import client
 
 def ssh_command(log, clnt, command):
     if not clnt:
-        log.error('No connected')
+        log.error('Not connected')
         return None
 
     stdin, stdout, stderr = clnt.exec_command(command)

@@ -50,7 +50,8 @@ The entries follow the pattern **url.XX** where XX is a
 number, unique to the section.
 
 ### Section 'remote'
-This section contains sets keys prefixed with url-identifiers.
+This section contains sets keys prefixed with url-identifiers. The section
+is also dynamic.
 
 | Name | Description |
 |------|-------------|
@@ -70,11 +71,11 @@ This section contains sets keys prefixed with url-identifiers.
     url.2 = http://invalid.url.io
     
     [remote]
-    url.4.user = pi
-    url.4.pwd = raspberry
-    url.4.process = python com_srv.py
-    url.4.scan_cmd = sudo ps aux
-    url.4.type = ssh
+    url.2.user = pi
+    url.2.pwd = raspberry
+    url.2.process = python com_srv.py
+    url.2.scan_cmd = sudo ps aux
+    url.2.type = ssh
     
 ## Result
 Every execution adds to the URL-named lists. The result codes are:
@@ -84,6 +85,7 @@ Every execution adds to the URL-named lists. The result codes are:
 | SUCCESS | All good |
 | EXCEPTION_ERROR | Something in the environment went wrong, like network or system unavailable. |
 | APPLICATION_ERROR | Service is there, but could not respond error-free to the request |
+
 The rest of the entries are self-explanatory.
 
 ```javascript
@@ -119,3 +121,4 @@ For more complex things it's recommended to use tools like [Salt](http://www.sal
 ## Additional sources
 * [Paramiko](http://www.paramiko.org/)
 * [Requests](http://docs.python-requests.org/en/master/)
+* [ps command](https://kb.iu.edu/d/afnv)
