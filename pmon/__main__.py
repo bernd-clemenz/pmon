@@ -54,7 +54,7 @@ def init(config_name):
         level = lv_mp[lv_cfg]
     else:
         level = logging.INFO
-    LOG.setLevel(logging.DEBUG)
+    LOG.setLevel(level)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     rh = logging.handlers.RotatingFileHandler(CFG['pmon']['log.file'],
                                               maxBytes=1024 * 1024,
