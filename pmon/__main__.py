@@ -1,5 +1,5 @@
 #
-# Entry point of the simple HTTP process monitor
+# Entry point of the simple HTTP process monitor.
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 

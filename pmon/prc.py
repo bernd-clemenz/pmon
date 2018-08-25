@@ -7,6 +7,13 @@ from paramiko import client
 
 
 def ssh_command(log, clnt, command):
+    """
+    Execute a command on remote machine
+    :param log: tje logger
+    :param clnt: a valid ssh connection
+    :param command: the command to issue
+    :return: output of the command
+    """
     if not clnt:
         log.error('Not connected')
         return None
@@ -24,6 +31,15 @@ def ssh_command(log, clnt, command):
 
 
 def ssh_scan_process(cfg, log, url_key, data_store):
+    """
+    Read remote process list an scan for a given text snippet
+    as indicator
+    :param cfg: the configuration
+    :param log: the logger
+    :param url_key: config key to identify process
+    :param data_store: store to put data in
+    :return:
+    """
     log.info("ssh connection and process scan: " + url_key)
     # Get process to scan for
     process = cfg['remote'][url_key + '.process']
@@ -59,6 +75,14 @@ def ssh_scan_process(cfg, log, url_key, data_store):
 
 
 def check_for_process(cfg, log, url_key, data_store):
+    """
+    Checking for processes, where configured.
+    :param cfg: the configuration
+    :param log: the logger
+    :param url_key: key in config to identify process
+    :param data_store: data container
+    :return:
+    """
     log.info("Checking for process " + url_key)
 
     # Connection type
