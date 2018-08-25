@@ -25,6 +25,11 @@ DATA = None
 
 
 def init(config_name):
+    """
+    Setup the application.
+    :param config_name: name of the config file
+    :return:
+    """
     global LOG, CFG, DATA
 
     # 1. Configuration
@@ -39,6 +44,16 @@ def init(config_name):
 
     # 2. Init logging
     LOG = logging.getLogger('pmon')
+    lv_cfg = CFG['pmon']['log.level']
+    lv_mp = {'INFO': logging.INFO,
+             'WARN': logging.WARNING,
+             'DEBUG': logging.DEBUG,
+             'FATAL': logging.FATAL,
+             'ERROR': logging.ERROR}
+    if lv_cfg is not None and lv_cfg in lv_mp.keys():
+        level = lv_mp[lv_cfg]
+    else:
+        level = logging.INFO
     LOG.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     rh = logging.handlers.RotatingFileHandler(CFG['pmon']['log.file'],
@@ -60,11 +75,21 @@ def init(config_name):
 
 
 def datetime_converter(o):
+    """
+    Converter for JSOn output
+    :param o: value to convert to a string
+    :return: string representation of the value
+    """
     if isinstance(o, datetime.datetime):
         return o.__str__()
 
 
 def check_url(cfg_name):
+    """
+    Do a GET query for url.
+    :param cfg_name: name-part in config to read URL etc from
+    :return:
+    """
     global LOG, CFG, DATA
     url = CFG['urls'][cfg_name]
     LOG.info("Checking url: " + url)
@@ -96,6 +121,10 @@ def check_url(cfg_name):
 
 
 def save_data():
+    """
+    Write to result file
+    :return:
+    """
     global LOG, CFG, DATA
     LOG.info('Writing result data')
     if len(DATA) > 0:
@@ -118,3 +147,4 @@ if __name__ == '__main__':
 
     # 3. post process results
     save_data()
+    LOG.info("done.")

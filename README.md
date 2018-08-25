@@ -42,6 +42,7 @@ The general configuration of the tool.
 | **id** | Identifies the instance of the monitor. Set it to a unique number |
 | **data.file** | Name of the file, to store the results for further evaluation |
 | **log.file** | Name of log output file |
+| **log.level** |  Logging output level. Supported values are: DEBUG, INFO, WARN, ERROR, FATAL  |
 | **timeout** | Wait for response in seconds until fail | 
 
 ### Section 'urls'
