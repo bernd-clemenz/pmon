@@ -15,11 +15,17 @@ is updated in subsequent executions.
 - Internet connection for setup
 
 ## Installation
+Fetch the source:
+
+```bash
+git clone git@github.com:bernd-clemenz/pmon.git
+```
+
 The tool is a simple Python 3 module it can be installed
 manually into the local Python 3 environment by switching to
 the directory with **pmon** files and executing
 
-    python setup.py
+    python setup.py install
     
 After installation it can be executed with the command
 
@@ -66,6 +72,8 @@ is also dynamic.
     [pmon]
     id=isc_001
     data.file = pmon.json
+    log.file = pmon.log
+    log.level = INFO
 
     [urls]
     url.1 = https://some-valid-url.io
