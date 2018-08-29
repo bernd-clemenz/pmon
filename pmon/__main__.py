@@ -40,6 +40,9 @@ def init(config_name):
     else:
         raise Exception('Unsupported Python major version')
 
+    if not os.path.isfile(config_name):
+        raise Exception('Config file not found: ' + config_name)
+        
     CFG.read(config_name)
 
     # 2. Init logging
@@ -97,7 +100,12 @@ def check_url(cfg_name):
     try:
         record['time'] = datetime.datetime.now()
         rsp = requests.get(url, timeout=int(CFG['pmon']['timeout']))
-        if rsp.status_code == requests.codes.ok:
+        if rsp.status_code in [requests.codes.ok,
+                               requests.codes.accepted,
+                               requests.codes.created,
+                               requests.codes.found,
+                               requests.codes.unauthorized,
+                               requests.codes.payment]:
             LOG.info("Check succeeded")
             record['result'] = 'SUCCESS'
             record['message'] = 'OK'
