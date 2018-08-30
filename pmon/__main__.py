@@ -11,6 +11,7 @@ import logging.handlers
 import os
 import pmon.prc
 import requests
+import smtplib
 import sys
 if sys.version_info.major == 3:
     import configparser
@@ -22,6 +23,7 @@ else:
 LOG = None
 CFG = None
 DATA = None
+THIS_RUN = None
 
 
 def init(config_name):
@@ -30,7 +32,7 @@ def init(config_name):
     :param config_name: name of the config file
     :return:
     """
-    global LOG, CFG, DATA
+    global LOG, CFG, DATA, THIS_RUN
 
     # 1. Configuration
     if sys.version_info.major == 3:
@@ -75,6 +77,8 @@ def init(config_name):
             DATA = json.load(f)
     else:
         DATA = dict()
+        
+    THIS_RUN = dict()    
 
 
 def datetime_converter(o):
@@ -93,7 +97,7 @@ def check_url(cfg_name):
     :param cfg_name: name-part in config to read URL etc from
     :return:
     """
-    global LOG, CFG, DATA
+    global LOG, CFG, DATA, THIS_RUN
     url = CFG['urls'][cfg_name]
     LOG.info("Checking url: " + url)
     record = dict()
@@ -126,6 +130,8 @@ def check_url(cfg_name):
         url_lines = list()
         url_lines.append(record)
         DATA[url] = url_lines
+        
+    THIS_RUN[url] = record   
 
 
 def save_data():
@@ -138,6 +144,27 @@ def save_data():
     if len(DATA) > 0:
         with open(CFG['pmon']['data.file'], 'w') as f:
             f.write(json.dumps(DATA, indent=2, sort_keys=True, default=datetime_converter))
+            
+            
+def notify():
+    global LOG, CFG, THIS_RUN
+    LOG.info('Notifying user(s)')
+    
+    msg_text = json.dumps(THIS_RUN, indent=2, sort_keys=True, default=datetime_converter)
+    msg = MIMEText('\n'.join(msg_text))
+    msg['From'] = config.get('email', 'from')
+    msg['To'] = config.get('email', 'to')
+    msg['Subject'] = 'Monitored processes'
+    s = smtplib.SMTP(config.get('email', 'server'), int(config.get('email', 'port')))
+    LOG.debug("Mail server connected")
+    try:
+        s.login(config.get('email', 'from'), config.get('email', 'pwd'))
+        s.sendmail(config.get('email', 'from'),
+                   config.get('email', 'to').split(','),
+                   msg.as_string())
+        LOG.debug("mail send")
+    finally:
+        s.quit()            
 
 
 if __name__ == '__main__':
@@ -155,4 +182,5 @@ if __name__ == '__main__':
 
     # 3. post process results
     save_data()
+    notify()
     LOG.info("done.")
