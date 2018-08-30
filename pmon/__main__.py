@@ -159,7 +159,7 @@ def notify():
     s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:
-        s.login(CFG.get('email', 'from'), config.get('email', 'pwd'))
+        s.login(CFG.get('email', 'from'), CFG.get('email', 'pwd'))
         s.sendmail(CFG.get('email', 'from'),
                    CFG.get('email', 'to').split(','),
                    msg.as_string())
