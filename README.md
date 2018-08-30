@@ -68,6 +68,15 @@ is also dynamic.
 | url.XX.scan_cmd | command to produce process list |
 | url.XX.type | **ssh** only supported type in version 0.0.1 |
 
+### Section 'email'
+| Name | Description |
+|------|-------------|
+| server | mail server name or ip |
+| port | the smptp port |
+| pwd | the password of the mail sender |
+| from | Mail address of the mai sender |
+| to | comma separated list of mail addresses to notify |
+
 ### Example
     [pmon]
     id=isc_001
