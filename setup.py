@@ -26,7 +26,6 @@ setuptools.setup(
     install_requires=(
         "argparse",
         "requests",
-        "paramiko",
-        "smtplib"
+        "paramiko"
     ),
 )
