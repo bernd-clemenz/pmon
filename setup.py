@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pmon",
-    version="0.0.4",
+    version="0.0.5",
     author="ISC Clemenz & Weinbrecht GmbH",
     author_email="info@isc-software.de",
     description="A very simple HTTP process monitor",

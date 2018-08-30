@@ -6,6 +6,7 @@
 import argparse
 import datetime
 import json
+import keyring
 import logging
 import logging.handlers
 from email.mime.text import MIMEText
@@ -159,7 +160,7 @@ def notify():
     s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:
-        s.login(CFG.get('email', 'from'), CFG.get('email', 'pwd'))
+        s.login(CFG.get('email', 'from'), keyring.get_password('pmon', 'email'))
         s.sendmail(CFG.get('email', 'from'),
                    CFG.get('email', 'to').split(','),
                    msg.as_string())
