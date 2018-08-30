@@ -153,15 +153,15 @@ def notify():
     
     msg_text = json.dumps(THIS_RUN, indent=2, sort_keys=True, default=datetime_converter)
     msg = MIMEText('\n'.join(msg_text))
-    msg['From'] = config.get('email', 'from')
-    msg['To'] = config.get('email', 'to')
+    msg['From'] = CFG.get('email', 'from')
+    msg['To'] = CFG.get('email', 'to')
     msg['Subject'] = 'Monitored processes'
-    s = smtplib.SMTP(config.get('email', 'server'), int(config.get('email', 'port')))
+    s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:
-        s.login(config.get('email', 'from'), config.get('email', 'pwd'))
-        s.sendmail(config.get('email', 'from'),
-                   config.get('email', 'to').split(','),
+        s.login(CFG.get('email', 'from'), config.get('email', 'pwd'))
+        s.sendmail(CFG.get('email', 'from'),
+                   CFG.get('email', 'to').split(','),
                    msg.as_string())
         LOG.debug("mail send")
     finally:
