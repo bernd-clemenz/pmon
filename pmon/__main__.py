@@ -152,7 +152,7 @@ def notify():
     LOG.info('Notifying user(s)')
     
     msg_text = json.dumps(THIS_RUN, indent=2, sort_keys=True, default=datetime_converter)
-    msg = MIMEText('\n'.join(msg_text))
+    msg = MIMEText(msg_text)
     msg['From'] = CFG.get('email', 'from')
     msg['To'] = CFG.get('email', 'to')
     msg['Subject'] = 'Monitored processes'
