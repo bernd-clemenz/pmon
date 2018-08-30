@@ -8,6 +8,7 @@ import datetime
 import json
 import logging
 import logging.handlers
+from email.mime.text import MIMEText
 import os
 import pmon.prc
 import requests
