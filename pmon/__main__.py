@@ -172,7 +172,7 @@ def notify():
     msg = MIMEText(msg_text)
     msg['From'] = CFG.get('email', 'from')
     msg['To'] = CFG.get('email', 'to')
-    msg['Subject'] = 'Monitored processes'
+    msg['Subject'] = 'Monitored processes on {}'.format(CFG['pmon']['id'])
     s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:
