@@ -89,8 +89,10 @@ is also dynamic.
     [pmon]
     id=isc_001
     data.file = pmon.json
+    latest.file = current.json
     log.file = pmon.log
     log.level = INFO
+    http.port = 8080
 
     [urls]
     url.1 = https://some-valid-url.io

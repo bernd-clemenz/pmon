@@ -4,6 +4,7 @@
 #
 
 import argparse
+import cherrypy
 import datetime
 import json
 import keyring
@@ -12,6 +13,7 @@ import logging.handlers
 from email.mime.text import MIMEText
 import os
 import pmon.prc
+from pmon.srvr import PmonServer
 import requests
 import smtplib
 import sys
@@ -141,14 +143,28 @@ def save_data():
     Write to result file
     :return:
     """
-    global LOG, CFG, DATA
-    LOG.info('Writing result data')
+    global LOG, CFG, DATA, THIS_RUN
+    LOG.info('Appending result data to collective file')
     if len(DATA) > 0:
-        with open(CFG['pmon']['data.file'], 'w') as f:
-            f.write(json.dumps(DATA, indent=2, sort_keys=True, default=datetime_converter))
-            
+        try:
+            with open(CFG['pmon']['data.file'], 'w') as f:
+                f.write(json.dumps(DATA, indent=2, sort_keys=True, default=datetime_converter))
+        except Exception as x:
+            LOG.error(str(x))
+                
+    LOG.info('Writing latest')        
+    if len(THIS_RUN) > 0:
+        try:
+            with open(CFG['pmon']['latest.file'], 'w') as f:
+                f.write(json.dumps(THIS_RUN, indent=2, sort_keys=True, default=datetime_converter))
+        except Exception as x:
+            LOG.error(str(x))
+                
             
 def notify():
+    """
+    Send email notifications to configured users.
+    """
     global LOG, CFG, THIS_RUN
     LOG.info('Notifying user(s)')
     
@@ -160,11 +176,14 @@ def notify():
     s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:
-        s.login(CFG.get('email', 'from'), keyring.get_password('pmon', 'email'))
+        #s.login(CFG.get('email', 'from'), keyring.get_password('pmon', 'email'))
+        s.login(CFG.get('email', 'from'), CFG['email']['pwd'])
         s.sendmail(CFG.get('email', 'from'),
                    CFG.get('email', 'to').split(','),
                    msg.as_string())
         LOG.debug("mail send")
+    except Exception as x:
+        LOG.error(str(x))
     finally:
         s.quit()            
 
@@ -173,16 +192,24 @@ if __name__ == '__main__':
     # 1. Define arguments and read commandline
     parser = argparse.ArgumentParser(description="Simple process monitor")
     parser.add_argument('--conf', type=str, default='pmon.ini')
+    parser.add_argument('--server', type=bool, default=False)
+    parser.add_argument('--nomail', type=bool, default=False)
     args = parser.parse_args()
 
     init(args.conf)
+    
+    if args.server:
+        cherrypy.server.socket_host = '0.0.0.0'
+        cherrypy.config.update({'server.socket_port': int(CFG['pmon']['http.port'])})
+        cherrypy.quickstart(PmonServer(LOG, CFG))
+    else:
+        # 2. process the checks
+        for n in CFG['urls'].keys():
+            if n.startswith('url.'):
+                check_url(n)
 
-    # 2. process the checks
-    for n in CFG['urls'].keys():
-        if n.startswith('url.'):
-            check_url(n)
-
-    # 3. post process results
-    save_data()
-    notify()
-    LOG.info("done.")
+        # 3. post process results
+        save_data()
+        if not args.nomail:
+            notify()
+        LOG.info("done.")
