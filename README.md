@@ -29,12 +29,18 @@ the directory with **pmon** files and executing
     
 After installation it can be executed with the command
 
-    python -m pmon [--conf=config-file-name]
+    python -m pmon [--conf=config-file-name] [--server=(True|False)] [--nomail=(True|False)]
     
 If one does not want to install it, it can be run just by
 switching to the directory and executing:
 
     python -m pmon
+    
+| Name | Description |
+|------|-------------|
+| conf | name of the configuration file |
+| server | flag to start the internal HTTP server |
+| nomail | flag to send no mail after processing |  
    
 ## Configuration
 The module is configured via an traditional ini file. If no name
@@ -47,9 +53,11 @@ The general configuration of the tool.
 |------|-------------|
 | **id** | Identifies the instance of the monitor. Set it to a unique number |
 | **data.file** | Name of the file, to store the results for further evaluation |
+| **latest.file** | Name of JSON file for just the latest result. |
 | **log.file** | Name of log output file |
 | **log.level** |  Logging output level. Supported values are: DEBUG, INFO, WARN, ERROR, FATAL  |
 | **timeout** | Wait for response in seconds until fail | 
+| **http.port** | Port of http if the server module is started |
 
 ### Section 'urls'
 A dynamic section where the URLs for GET access are configured.
