@@ -29,7 +29,7 @@ class PmonServer(object):
             with open(f_name, 'r') as f:
                 data = json.load(f)
             
-            data['id'] = self.cfg['pmon']['id']
-            return data    
+            result = {'id': self.cfg['pmon']['id'], 'data': data }
+            return result    
         except FileNotFoundError:
             raise cherrypy.HTTPError(404)
