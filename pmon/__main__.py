@@ -127,7 +127,7 @@ def check_url(cfg_name):
         LOG.error("Check failed due: " + str(x))
         record['result'] = 'EXCEPTION_ERROR'
         record['message'] = str(x)
-
+        pmon.prc.check_for_process(CFG, LOG, cfg_name, record)
     if url in DATA:
         DATA[url].append(record)
     else:
@@ -176,7 +176,7 @@ def notify():
     s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:
-        #s.login(CFG.get('email', 'from'), keyring.get_password('pmon', 'email'))
+        # s.login(CFG.get('email', 'from'), keyring.get_password('pmon', 'email'))
         s.login(CFG.get('email', 'from'), CFG['email']['pwd'])
         s.sendmail(CFG.get('email', 'from'),
                    CFG.get('email', 'to').split(','),

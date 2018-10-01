@@ -57,21 +57,27 @@ def ssh_scan_process(cfg, log, url_key, data_store):
                  password=cfg['remote'][url_key + '.pwd'],
                  look_for_keys=False)
     try:
+        log.debug('ssh connected')
         result = ssh_command(log, clnt, cfg['remote'][url_key + '.scan_cmd'])
         if result is not None:
+            # log.debug('Result: {0}'.format(result))
             lns = result.split('\n')
             fnd = list()
             for l in lns:
                 if l.find(process, 0) >= 0:
                     fnd.append(l)
             data_store['ssh'] = fnd
-            if len(fnd):
+            if len(fnd) > 0:
                 log.info("found process entries for: " + url_key)
+            else:
+                log.debug('No matching process found')
+                data_store['ssh'] = ['Process marker not found on remote machine']
         else:
             log.error('No remote scan result')
-            data_store['ssh'] = ['no ps result']
+            data_store['ssh'] = ['no ps result at all']
     finally:
         clnt.close()
+        log.debug('ssh closed')
 
 
 def check_for_process(cfg, log, url_key, data_store):
