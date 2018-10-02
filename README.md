@@ -149,8 +149,13 @@ The rest of the entries are self-explanatory.
 The module can also perform some simple remote data digging, if access is configured.
 For more complex things it's recommended to use tools like [Salt](http://www.saltstack.com).
 
+## Copyrights
+This repository contains Jquery and JqueryUI the copyrights remain with the respective owner(s).
+
 ## Additional sources
 * [Paramiko](http://www.paramiko.org/)
 * [Requests](http://docs.python-requests.org/en/master/)
 * [ps command](https://kb.iu.edu/d/afnv)
 * [Cherrypy](https://docs.cherrypy.org)
+* [jQuery](https://www.jquery.com)
+* [jQueryUI](https://www.jqueryui.com)
