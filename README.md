@@ -40,7 +40,7 @@ switching to the directory and executing:
 |------|-------------|
 | conf | name of the configuration file |
 | server | flag to start the internal HTTP server |
-| nomail | flag to send no mail after processing |  
+| nomail | flag to send **no** mail after processing |  
    
 ## Configuration
 The module is configured via an traditional ini file. If no name
@@ -58,6 +58,8 @@ The general configuration of the tool.
 | **log.level** |  Logging output level. Supported values are: DEBUG, INFO, WARN, ERROR, FATAL  |
 | **timeout** | Wait for response in seconds until fail | 
 | **http.port** | Port of http if the server module is started |
+| **http.bind** | To what IP to bind the server, typically 0.0.0.0 |
+| **http.public** | public directory for the UI |
 
 ### Section 'urls'
 A dynamic section where the URLs for GET access are configured.
@@ -82,8 +84,9 @@ is also dynamic.
 | server | mail server name or ip |
 | port | the smptp port |
 | pwd | the password of the mail sender |
-| from | Mail address of the mai sender |
+| from | Mail address of the mail sender |
 | to | comma separated list of mail addresses to notify |
+
 
 ### Example
     [pmon]
@@ -150,3 +153,4 @@ For more complex things it's recommended to use tools like [Salt](http://www.sal
 * [Paramiko](http://www.paramiko.org/)
 * [Requests](http://docs.python-requests.org/en/master/)
 * [ps command](https://kb.iu.edu/d/afnv)
+* [Cherrypy](https://docs.cherrypy.org)

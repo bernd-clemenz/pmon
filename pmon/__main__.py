@@ -5,6 +5,7 @@
 
 import argparse
 import cherrypy
+import configparser
 import datetime
 import json
 import keyring
@@ -17,12 +18,7 @@ from pmon.srvr import PmonServer
 import requests
 import smtplib
 import sys
-if sys.version_info.major == 3:
-    import configparser
-elif sys.version_info.major == 2:
-    import ConfigParser
-else:
-    raise Exception('Unsupported Python major version')
+
 
 LOG = None
 CFG = None
@@ -39,12 +35,7 @@ def init(config_name):
     global LOG, CFG, DATA, THIS_RUN
 
     # 1. Configuration
-    if sys.version_info.major == 3:
-        CFG = configparser.ConfigParser()
-    elif sys.version_info.major == 2:
-        CFG = ConfigParser.SafeConfigParser()
-    else:
-        raise Exception('Unsupported Python major version')
+    CFG = configparser.ConfigParser()
 
     if not os.path.isfile(config_name):
         raise Exception('Config file not found: ' + config_name)
@@ -199,9 +190,18 @@ if __name__ == '__main__':
     init(args.conf)
     
     if args.server:
-        cherrypy.server.socket_host = '0.0.0.0'
-        cherrypy.config.update({'server.socket_port': int(CFG['pmon']['http.port'])})
-        cherrypy.quickstart(PmonServer(LOG, CFG))
+        cherrypy.server.socket_host = CFG['pmon']['http.bind']
+        cherrypy.server.socket_port = int(CFG['pmon']['http.port'])
+        conf = {'/': {
+                       'tools.sessions.on': False,
+                       'tools.staticdir.root': os.path.abspath(os.getcwd())
+                },
+                '/static': {
+                             'tools.staticdir.on': True,
+                             'tools.staticdir.dir': CFG['pmon']['http.static']
+                }
+               }
+        cherrypy.quickstart(PmonServer(LOG, CFG), '/', conf)
     else:
         # 2. process the checks
         for n in CFG['urls'].keys():
