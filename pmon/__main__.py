@@ -225,3 +225,5 @@ if __name__ == '__main__':
         # 2. process the checks
         execute_scan(args.nomail)
         LOG.info("done.")
+
+    sys.exit(0)
