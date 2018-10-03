@@ -180,6 +180,11 @@ def notify():
 
 
 def execute_scan(nomail_flag):
+    """
+    Does the main work of working throgh the URL-list.
+    :param nomail_flag: value of the flag
+    :return: 
+    """
     global LOG, CFG, THIS_RUN
     LOG.debug('scan ...')
 
