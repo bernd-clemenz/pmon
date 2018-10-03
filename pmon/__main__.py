@@ -78,7 +78,7 @@ def init(config_name):
 
 def datetime_converter(o):
     """
-    Converter for JSOn output
+    Converter for JSON output
     :param o: value to convert to a string
     :return: string representation of the value
     """
@@ -176,7 +176,21 @@ def notify():
     except Exception as x:
         LOG.error(str(x))
     finally:
-        s.quit()            
+        s.quit()
+
+
+def execute_scan(nomail_flag):
+    global LOG, CFG, THIS_RUN
+    LOG.debug('scan ...')
+
+    for n in CFG['urls'].keys():
+        if n.startswith('url.'):
+            check_url(n)
+
+    # 3. post process results
+    save_data()
+    if not nomail_flag:
+        notify()
 
 
 if __name__ == '__main__':
@@ -201,15 +215,8 @@ if __name__ == '__main__':
                              'tools.staticdir.dir': CFG['pmon']['http.static']
                 }
                }
-        cherrypy.quickstart(PmonServer(LOG, CFG), '/', conf)
+        cherrypy.quickstart(PmonServer(LOG, CFG, args.nomail, execute_scan), '/', conf)
     else:
         # 2. process the checks
-        for n in CFG['urls'].keys():
-            if n.startswith('url.'):
-                check_url(n)
-
-        # 3. post process results
-        save_data()
-        if not args.nomail:
-            notify()
+        execute_scan(args.nomail)
         LOG.info("done.")

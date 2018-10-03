@@ -1,0 +1,5 @@
+include public/*.html
+include public/js/*.js
+include public/js/*.css
+include public/images/*.png
+include public/*.txt

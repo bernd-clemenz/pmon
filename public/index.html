@@ -7,11 +7,11 @@
       <link href="js/jquery-ui.structure.min.css" rel="stylesheet">
       <link href="js/jquery-ui.theme.min.css" rel="stylesheet">
       <style>
-        body     { font-family: "Gill Sans Extrabold", Helvetica, sans-serif }
+        body { font-family: "Gill Sans Extrabold", Tahoma, Verdana, Helvetica, sans-serif }
       </style>
   </head>
   <body>
-
+  <button id="forceBtn" class="ui-button ui-widget ui-corner-all">Force scan</button>
     <table id="statusTbl" class="ui-widget">
         <thead class="ui-widget-header">
           <th>url</th>
@@ -27,30 +27,48 @@
     <script  src="js/jquery-ui.min.js"></script>
     <script>
       $(document).ready(function() {
+        // process start up, hide everything, read data then show results
+        $('#forceBtn').hide();
         $('#statusTbl').hide();
-        $.getJSON('/', function(data) {
-          var lines = []
-          $.each(data['data'],function(url,details) {
-            var bgr = "white";
-            switch(details['result']) {
+
+        $.getJSON('/',displayResult);
+        // force the scan
+        $('#forceBtn').click(function() {
+          $.getJSON('/scan',displayResult);
+        });
+      });
+
+      function displayResult(data) {
+        $('#forceBtn').hide();
+        $('#statusTbl').hide();
+        $("html,body").css("cursor", "progress");
+
+        var lines = []
+        $.each(data['data'],function(url,details) {
+          var bgr = "white";
+          switch(details['result']) {
               case "SUCCESS" : bgr = 'green'; break;
               case "APPLICATION_ERROR": bgr = 'yellow'; break;
               case "EXCEPTION_ERROR": bgr = 'red'; break;
               default: bgr="white";
-            }
-            var resCellCol = 'style="background-color: ' + bgr + '; font-weight: bold; color: white;"';
-            var ssh = details['ssh'];
-            if(undefined === ssh || null === ssh) {
-              ssh = '';
-            }
-            lines.push('<tr class="ui-widget-content"><td class="ui-widget-content"><a href="' + url + '" target="_blank">' + url + '</td><td class="ui-widget-content" ' + resCellCol + '>' + details['result'] +'</td><td class="ui-widget-content">' + details['time'] +'</td><td class="ui-widget-content">' + details['message'] + '</td><td class="ui-widget-content">' + ssh +'</td></tr>');
-          });
-          var tblLines = lines.join("");
-          //console.log(tblLines);
-          $('#statusTbl tbody').append(tblLines);
-          $('#statusTbl').show();
+          }
+          var resCellCol = 'style="background-color: ' + bgr + '; font-weight: bold; color: white;"';
+          var ssh = details['ssh'];
+          if(undefined === ssh || null === ssh) {
+            ssh = '';
+          }
+          lines.push('<tr class="ui-widget-content"><td class="ui-widget-content"><a href="' + url + '" target="_blank">' + url + '</td><td class="ui-widget-content" ' + resCellCol + '>' + details['result'] +'</td><td class="ui-widget-content">' + details['time'] +'</td><td class="ui-widget-content">' + details['message'] + '</td><td class="ui-widget-content">' + ssh +'</td></tr>');
         });
-      });
+        var tblLines = lines.join("");
+        $('#statusTbl tbody').find('tr').each(function() {
+          $(this).remove();
+        });
+        $('#statusTbl tbody').append(tblLines);
+
+        $("html,body").css("cursor", "auto");
+        $('#forceBtn').show();
+        $('#statusTbl').show();
+      }
     </script>
   </body>
 </html>
