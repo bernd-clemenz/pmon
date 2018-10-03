@@ -82,7 +82,7 @@ is also dynamic.
 | Name | Description |
 |------|-------------|
 | server | mail server name or ip |
-| port | the smptp port |
+| port | the smtp port |
 | pwd | the password of the mail sender |
 | from | Mail address of the mail sender |
 | to | comma separated list of mail addresses to notify |

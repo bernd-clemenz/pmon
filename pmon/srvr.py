@@ -1,5 +1,7 @@
 #
-# Methods to deal with a process list
+# Embedded webserver, publishes latest results
+# ans allows triggering a immediate rescan.
+#
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 
@@ -53,6 +55,10 @@ class PmonServer(object):
     @cherrypy.tools.accept(media='application/json')
     @cherrypy.tools.json_out()
     def scan(self):
+        """
+        Triggers rescan of process data.
+        :return: same as index(self)
+        """
         self.log.debug('Forced scan')
         if self.scan_callback is None:
             raise cherrypy.HTTPError(404)
