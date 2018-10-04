@@ -186,7 +186,7 @@ def execute_scan(nomail_flag):
     :return: 
     """
     global LOG, CFG, THIS_RUN
-    LOG.debug('scan ...')
+    LOG.debug('scan ... ')
 
     for n in CFG['urls'].keys():
         if n.startswith('url.'):

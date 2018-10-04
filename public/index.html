@@ -7,39 +7,54 @@
       <link href="js/jquery-ui.structure.min.css" rel="stylesheet">
       <link href="js/jquery-ui.theme.min.css" rel="stylesheet">
       <style>
-        body { font-family: "Gill Sans Extrabold", Tahoma, Verdana, Helvetica, sans-serif }
+        body { font-family: "Gill Sans Extrabold", Tahoma, Verdana, Helvetica, sans-serif; }
       </style>
   </head>
   <body>
-  <button id="forceBtn" class="ui-button ui-widget ui-corner-all">Force scan</button>
+  <button id="forceBtn" class="ui-button ui-widget ui-corner-all">
+      <span class="ui-icon ui-icon-refresh"></span>
+      <span class="ui-icon  ui-icon-search"></span>
+  </button>
+  <button id="forceNotifyBtn" class="ui-button ui-widget ui-corner-all">
+      <span class="ui-icon ui-icon-refresh"></span>
+      <span class="ui-icon ui-icon-search"></span>
+      <span class="ui-icon ui-icon-mail-closed"></span>
+  </button>
     <table id="statusTbl" class="ui-widget">
         <thead class="ui-widget-header">
-          <th>url</th>
-          <th>result</th>
-          <th>time</th>
-          <th>message</th>
-          <th>ssh</th>
+            <tr>
+              <th>url</th>
+              <th>result</th>
+              <th>time</th>
+              <th>message</th>
+              <th>ssh</th>
+            </tr>
         </thead>
         <tbody class="ui-widget-content"></tbody>
     </table>
 
-    <script  src="js/jquery-3.3.1.min.js"></script>
-    <script  src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <script>
       $(document).ready(function() {
-        // process start up, hide everything, read data then show results
         $('#forceBtn').hide();
+        $('#forceNotifyBtn').hide();
         $('#statusTbl').hide();
 
         $.getJSON('/',displayResult);
-        // force the scan
+
         $('#forceBtn').click(function() {
           $.getJSON('/scan',displayResult);
+        });
+
+        $('#forceNotifyBtn').click(function() {
+          $.getJSON('/scan?notify=True',displayResult);
         });
       });
 
       function displayResult(data) {
         $('#forceBtn').hide();
+        $('#forceNotifyBtn').hide();
         $('#statusTbl').hide();
         $("html,body").css("cursor", "progress");
 
@@ -67,6 +82,7 @@
 
         $("html,body").css("cursor", "auto");
         $('#forceBtn').show();
+        $('#forceNotifyBtn').show();
         $('#statusTbl').show();
       }
     </script>

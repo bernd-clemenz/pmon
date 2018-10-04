@@ -54,14 +54,19 @@ class PmonServer(object):
     @cherrypy.expose
     @cherrypy.tools.accept(media='application/json')
     @cherrypy.tools.json_out()
-    def scan(self):
+    def scan(self, notify=False):
         """
         Triggers rescan of process data.
+        :param notify: value for the nomail flag given by web-user
         :return: same as index(self)
         """
-        self.log.debug('Forced scan')
+        self.log.debug('Forced scan: {0}'.format(notify))
         if self.scan_callback is None:
             raise cherrypy.HTTPError(404)
 
-        self.scan_callback(self.nomail_flag)
+        local_nomail_flag = self.nomail_flag
+        if notify is not None:
+            local_nomail_flag = not (notify == 'True')
+
+        self.scan_callback(local_nomail_flag)
         return self.index()
