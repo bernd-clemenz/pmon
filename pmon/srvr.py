@@ -1,5 +1,5 @@
 #
-# Embedded webserver, publishes latest results
+# Embedded web-server, publishes latest results
 # ans allows triggering a immediate rescan.
 #
 # (c) ISC Clemenz & Weinbrecht GmbH 2018

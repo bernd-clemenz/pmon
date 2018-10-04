@@ -14,6 +14,9 @@ is updated in subsequent executions.
 - Module requirements are resolved by **setup.py**
 - Internet connection for setup
 
+## Overview
+![](etc/pmon.png)
+
 ## Installation
 Fetch the source:
 

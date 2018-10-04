@@ -1,0 +1,33 @@
+@startuml
+title PMON - HTTP process monitoring
+
+actor Bob
+
+== Basic ==
+Bob -> "Landing page" as L
+L -> "Pmon server" as P
+database latest as db
+db -> P
+P -> L
+L -> Bob
+
+== Standalone direct call CLI ==
+Bob -> "Pmon core" as C
+boundary "System under control" as SUC
+database pmon_all as dba
+C -> SUC
+C <- SUC
+C -> dba
+C -> db
+== Force scan ==
+Bob -> L
+L -> P
+P -> C
+C -> SUC
+C <- SUC
+C -> dba
+C -> db
+P <- db
+L <- P
+Bob <- L
+@enduml
