@@ -8,13 +8,12 @@ import cherrypy
 import configparser
 import datetime
 import json
-import keyring
 import logging
 import logging.handlers
 from email.mime.text import MIMEText
 import os
-import pmon.prc
 from pmon.srvr import PmonServer
+from pmon.ssh_sensor import PmonSensor
 import requests
 import smtplib
 import sys
@@ -112,13 +111,12 @@ def check_url(cfg_name):
             LOG.warning("Check failed with status: " + str(rsp.status_code))
             record['result'] = 'APPLICATION_ERROR'
             record['message'] = rsp.status_code
-            # perform additional operations
-            pmon.prc.check_for_process(CFG, LOG, cfg_name, record)
+            PmonSensor.all_sensors(LOG, CFG, cfg_name, record)
     except Exception as x:
         LOG.error("Check failed due: " + str(x))
         record['result'] = 'EXCEPTION_ERROR'
         record['message'] = str(x)
-        pmon.prc.check_for_process(CFG, LOG, cfg_name, record)
+        PmonSensor.all_sensors(LOG, CFG, cfg_name, record)
     if url in DATA:
         DATA[url].append(record)
     else:
@@ -181,7 +179,7 @@ def notify():
 
 def execute_scan(nomail_flag):
     """
-    Does the main work of working throgh the URL-list.
+    Does the main work of working through the URL-list.
     :param nomail_flag: value of the flag
     :return: 
     """
@@ -214,11 +212,11 @@ if __name__ == '__main__':
         conf = {'/': {
                        'tools.sessions.on': False,
                        'tools.staticdir.root': os.path.abspath(os.getcwd())
-                },
+                     },
                 '/static': {
                              'tools.staticdir.on': True,
                              'tools.staticdir.dir': CFG['pmon']['http.static']
-                }
+                           }
                }
         cherrypy.quickstart(PmonServer(LOG, CFG, args.nomail, execute_scan), '/', conf)
     else:

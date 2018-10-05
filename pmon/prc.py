@@ -1,6 +1,7 @@
 #
 # Methods to deal with a process list
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
+# Deprecated - do not use anymore. Use sensor_ssh / PmonSensor instead
 #
 import urllib.parse
 from paramiko import client

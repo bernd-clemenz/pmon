@@ -155,6 +155,14 @@ For more complex things it's recommended to use tools like [Salt](http://www.sal
 ## Copyrights
 This repository contains Jquery and JqueryUI the copyrights remain with the respective owner(s).
 
+## Hints
+Create a virtual Python environment for the project and activate it with:
+
+```bash
+cd YOUR_PROJECT_HOME
+source venv/Scripts/activate
+```
+
 ## Additional sources
 * [Paramiko](http://www.paramiko.org/)
 * [Requests](http://docs.python-requests.org/en/master/)
