@@ -17,7 +17,7 @@ is updated in subsequent executions.
 ## Overview
 ![](etc/pmon.png)
 
-## Installation
+## Installation and execution
 Fetch the source:
 
 ```bash
@@ -32,7 +32,7 @@ the directory with **pmon** files and executing
     
 After installation it can be executed with the command
 
-    python -m pmon [--conf=config-file-name] [--server=(True|False)] [--nomail=(True|False)]
+    python -m pmon [--conf=full-config-file-name] [--server=(True|False)] [--nomail=(True|False)]
     
 If one does not want to install it, it can be run just by
 switching to the directory and executing:
@@ -43,7 +43,12 @@ switching to the directory and executing:
 |------|-------------|
 | conf | name of the configuration file |
 | server | flag to start the internal HTTP server |
-| nomail | flag to send **no** mail after processing |  
+| nomail | flag to send **no** mail after processing | 
+
+### Automated execution via 'cron'
+
+>  @reboot      python -m pmon --conf=/configpath/pmon.ini --server=True --nomail=True
+>  @daily       python -m pmon --conf=/configpath/pmon.ini
    
 ## Configuration
 The module is configured via an traditional ini file. If no name
