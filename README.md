@@ -48,6 +48,7 @@ switching to the directory and executing:
 ### Automated execution via 'cron'
 
 >  @reboot      python -m pmon --conf=/configpath/pmon.ini --server=True --nomail=True
+
 >  @daily       python -m pmon --conf=/configpath/pmon.ini
    
 ## Configuration
