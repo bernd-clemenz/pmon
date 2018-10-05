@@ -5,6 +5,9 @@ actor Bob
 
 == Basic ==
 Bob -> "Landing page" as L
+note left
+ GET http://PMON-HOST/static/index.html
+end note
 L -> "Pmon server" as P
 database latest as db
 db -> P
@@ -13,6 +16,9 @@ L -> Bob
 
 == Standalone direct call CLI ==
 Bob -> "Pmon core" as C
+note left
+  python -m pmon [--nomail=True]
+end note
 boundary "System under control" as SUC
 database pmon_all as dba
 C -> SUC

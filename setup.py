@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pmon",
-    version="0.0.8",
+    version="0.0.9",
     author="ISC Clemenz & Weinbrecht GmbH",
     author_email="info@isc-software.de",
     description="A very simple HTTP process monitor",
@@ -26,8 +26,7 @@ setuptools.setup(
     install_requires=(
         "argparse",
         "requests",
-        "paramiko",
-        "keyring",
+        "paramiko"
         "cherrypy"
     ),
 )
