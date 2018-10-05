@@ -26,6 +26,7 @@ class PmonSensor(object):
 
     """
     Reading some OS data via SSH from the target system.
+    Cleanup requires call to 'close()'
     """
     log = None
     cfg = None
@@ -45,7 +46,7 @@ class PmonSensor(object):
         self.log = log
         self.url_key = url_key
         self.record = record
-        self.connect()
+        self.__connect()
 
     def __enter__(self):
         """
@@ -64,8 +65,8 @@ class PmonSensor(object):
         """
         self.close()
 
-    def connect(self):
-        if not self.check():
+    def __connect(self):
+        if not self.__check():
             return
         url = self.cfg['urls'][self.url_key]
         parsed = urllib.parse.urlparse(url)
@@ -84,7 +85,7 @@ class PmonSensor(object):
             self.clnt = None
             self.log.debug("SSH sensor connection closed")
 
-    def ssh_command(self, command):
+    def __ssh_command(self, command):
         """
         Execute a command on remote machine.
 
@@ -107,7 +108,7 @@ class PmonSensor(object):
 
                 return str(alldata, 'utf-8')
 
-    def check(self):
+    def __check(self):
         """
         Check if a SSH connection is set
         :return: True if connection type is SSH, otherwise False
@@ -132,7 +133,7 @@ class PmonSensor(object):
         :return:
         """
 
-        df_data = self.ssh_command('df')
+        df_data = self.__ssh_command('df')
         self.record['file.system'] = df_data
 
     def mem(self):
@@ -141,7 +142,7 @@ class PmonSensor(object):
         Adds 'memory' entry to record data
         :return:
         """
-        mem_data = self.ssh_command("egrep 'Mem|Cache|Swap' /proc/meminfo")
+        mem_data = self.__ssh_command("egrep 'Mem|Cache|Swap' /proc/meminfo")
         self.record['memory'] = mem_data
 
     def scan_cmd(self):
@@ -154,7 +155,7 @@ class PmonSensor(object):
             self.log.warn('No process defined to scan for: ' + self.url_key)
             self.record['ssh'] = ['no process marker configured']
             return
-        result = self.ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
+        result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
         if result is not None:
             # log.debug('Result: {0}'.format(result))
             lns = result.split('\n')
