@@ -65,13 +65,36 @@ class PmonSensor(object):
         """
         self.close()
 
+    def __add_to_ssh_message(self, msg):
+        """
+        Adding a text to the 'ssh'-key values in the
+        'record' data container.
+        :param msg: the message to add
+        :return:
+        """
+        if msg is None or msg == '':
+            return
+
+        if 'ssh' in self.record:
+            messages = self.record['ssh']
+        else:
+            messages = list()
+            self.record['ssh'] = messages
+
+        messages.append(msg)
+
     def __connect(self):
-        if not self.__check():
+        """
+        Create a ssh client and store it in member variable.
+        :return:
+        """
+        if not self.__check() or self.clnt is not None:
             return
         url = self.cfg['urls'][self.url_key]
         parsed = urllib.parse.urlparse(url)
         host = parsed.netloc
         self.clnt = client.SSHClient()
+        self.clnt.load_system_host_keys()
         self.clnt.set_missing_host_key_policy(client.AutoAddPolicy())
         self.clnt.connect(host,
                           username=self.cfg['remote'][self.url_key + '.user'],
@@ -94,19 +117,24 @@ class PmonSensor(object):
         """
         if not self.clnt:
             self.log.error('Not connected')
+            self.__add_to_ssh_message('Not connected')
             return None
 
         self.log.debug("Executing command: {0}".format(command))
-        stdin, stdout, stderr = self.clnt.exec_command(command)
-        while not stdout.channel.exit_status_ready():
-            if stdout.channel.recv_ready():
-                alldata = stdout.channel.recv(1024)
-                prevdata = b"1"
-                while prevdata:
-                    prevdata = stdout.channel.recv(1024)
-                    alldata += prevdata
+        try:
+            stdin, stdout, stderr = self.clnt.exec_command(command)
+            while not stdout.channel.exit_status_ready():
+                if stdout.channel.recv_ready():
+                    alldata = stdout.channel.recv(1024)
+                    prevdata = b"1"
+                    while prevdata:
+                        prevdata = stdout.channel.recv(1024)
+                        alldata += prevdata
 
-                return str(alldata, 'utf-8')
+                    return str(alldata, 'utf-8')
+        except Exception as x:
+            self.__add_to_ssh_message(str(x))
+
 
     def __check(self):
         """
@@ -132,7 +160,6 @@ class PmonSensor(object):
         A 'df' command. Add 'file.system' entry to record data
         :return:
         """
-
         df_data = self.__ssh_command('df')
         self.record['file.system'] = df_data
 
@@ -153,7 +180,7 @@ class PmonSensor(object):
         process = self.cfg['remote'][self.url_key + '.process']
         if process is None or process == '':
             self.log.warn('No process defined to scan for: ' + self.url_key)
-            self.record['ssh'] = ['no process marker configured']
+            self.__add_to_ssh_message('no process marker configured')
             return
         result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
         if result is not None:
@@ -168,7 +195,7 @@ class PmonSensor(object):
                 self.log.info("found process entries for: " + self.url_key)
             else:
                 self.log.debug('No matching process found')
-                self.record['ssh'] = ['Process marker not found on remote machine']
+                self.__add_to_ssh_message('Process marker not found on remote machine')
         else:
             self.log.error('No remote scan result')
-            self.record['ssh'] = ['no ps result at all']
+            self.__add_to_ssh_message('no ps result at all')
