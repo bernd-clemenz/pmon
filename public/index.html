@@ -7,7 +7,11 @@
       <link href="js/jquery-ui.structure.min.css" rel="stylesheet">
       <link href="js/jquery-ui.theme.min.css" rel="stylesheet">
       <style>
-        body { font-family: "Gill Sans Extrabold", Tahoma, Verdana, Helvetica, sans-serif; }
+        body {
+          font-family: "Gill Sans Extrabold", Tahoma, Verdana, Helvetica, sans-serif;
+          font-size: small;
+          background-color: #FAFAFA;
+        }
       </style>
   </head>
   <body>
@@ -62,9 +66,9 @@
         $.each(data['data'],function(url,details) {
           var bgr = "white";
           switch(details['result']) {
-              case "SUCCESS" : bgr = 'green'; break;
-              case "APPLICATION_ERROR": bgr = 'yellow'; break;
-              case "EXCEPTION_ERROR": bgr = 'red'; break;
+              case "SUCCESS" : bgr = '#2EFE2E'; break;
+              case "APPLICATION_ERROR": bgr = '#F4FA58'; break;
+              case "EXCEPTION_ERROR": bgr = '#FE2E2E'; break;
               default: bgr="white";
           }
           var resCellCol = 'style="background-color: ' + bgr + '; font-weight: bold; color: white;"';
