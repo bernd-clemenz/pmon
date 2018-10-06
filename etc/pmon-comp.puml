@@ -1,0 +1,46 @@
+@startuml
+title Pmon components
+
+package "PMON" {
+  [requests] as RQ
+  [CherryPy] as C
+  [paramiko] as P
+  [pmon-core] as CR
+}
+
+interface CLI
+
+CR -> RQ
+CR -> P
+CR -> C
+CLI - CR
+
+package "Pmon-UI" {
+  [jquery] as JQ
+  [jquery-UI] as JQU
+  [Landing\npage] as LP
+  LP -> JQ
+  LP -> JQU
+}
+
+package "Remote systems" {
+  [HTTP only] as HO
+  [HTTP on LINUX] as HSSH
+}
+
+interface HTTP
+HTTP -[#blue] CR
+HTTP -[#blue] JQ
+HTTP -[#blue] JQU
+
+HO -[#blue] HTTP
+HSSH -[#blue] HTTP
+
+CR -[#black]> HO
+CR -[#black]> HSSH
+
+interface SSH
+CR - SSH
+HSSH - SSH
+
+@enduml

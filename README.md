@@ -16,6 +16,7 @@ is updated in subsequent executions.
 
 ## Overview
 ![](etc/pmon.png)
+![](etc/pmon-comp.png)
 
 ## Installation and execution
 Fetch the source:
