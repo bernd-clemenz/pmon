@@ -87,6 +87,10 @@ is also dynamic.
 | url.XX.process | string to search in command result |
 | url.XX.scan_cmd | command to produce process list |
 | url.XX.type | **ssh** only supported type in version 0.0.1 |
+| url.XX.log.dir | location of the log directory to scan |
+| url.XX.log.pattern | **grep** pattern to scan in logs |
+| url.XX.log.files | glob for to select the log files to scan |
+
 
 ### Section 'email'
 | Name | Description |
