@@ -1,4 +1,5 @@
 #
+# -*- coding: utf-8-*-
 # Installation script for the simple http process monitor
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
@@ -10,7 +11,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pmon",
-    version="0.0.9",
+    version="0.0.10",
     author="ISC Clemenz & Weinbrecht GmbH",
     author_email="info@isc-software.de",
     description="A very simple HTTP process monitor",

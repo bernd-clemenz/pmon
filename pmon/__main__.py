@@ -1,4 +1,5 @@
 #
+# -*- coding: utf-8-*-
 # Entry point of the simple HTTP process monitor.
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #

@@ -1,4 +1,5 @@
 #
+# -*- coding: utf-8-*-
 # SSH based sensor on top of paramiko.
 #
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
@@ -21,8 +22,9 @@ class PmonSensor(object):
         """
         with PmonSensor(log, cfg, url_key, record) as sensor:
             sensor.scan_cmd()
-            sensor.df()
+            sensor.df_size()
             sensor.mem()
+            sensor.scan_logs()
 
     """
     Reading some OS data via SSH from the target system.
@@ -135,7 +137,6 @@ class PmonSensor(object):
         except Exception as x:
             self.__add_to_ssh_message(str(x))
 
-
     def __check(self):
         """
         Check if a SSH connection is set
@@ -155,7 +156,7 @@ class PmonSensor(object):
             self.log.warning('No type entry')
             return False
 
-    def df(self):
+    def df_size(self):
         """
         A 'df' command. Add 'file.system' entry to record data
         :return:
@@ -199,3 +200,20 @@ class PmonSensor(object):
         else:
             self.log.error('No remote scan result')
             self.__add_to_ssh_message('no ps result at all')
+
+    def scan_logs(self):
+        """
+        Scan log files using grep on remote machine
+        :return:
+        """
+        self.log.debug('Scan log files')
+        pattern = self.cfg['remote'][self.url_key + '.log.pattern']
+        log_dir = self.cfg['remote'][self.url_key + '.log.dir']
+        log_files = self.cfg['remote'][self.url_key + '.log.files']
+        if pattern is None or log_dir is None or log_files is None:
+            self.log.info('No log file scan configured or incomplete')
+            self.__add_to_ssh_message('No log file scan configured or incomplete')
+            return
+        cmd = 'grep -i "{0}" {1}/{2}'.format(pattern, log_dir, log_files)
+        grep = self.__ssh_command(cmd)
+        self.record['logs'] = grep

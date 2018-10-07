@@ -32,6 +32,9 @@
               <th>time</th>
               <th>message</th>
               <th>ssh</th>
+              <th>memory</th>
+              <th>storage</th>
+              <th>logs</th>
             </tr>
         </thead>
         <tbody class="ui-widget-content"></tbody>
@@ -56,13 +59,22 @@
         });
       });
 
+      function addInfoBtn(id) {
+        var btnDef =    ('<button id="BTN_ID" class="ui-button ui-widget ui-corner-all">'
+                      + '<span class="ui-icon ui-icon-info"></span>'
+                      + '</button>').replace('BTN_ID',id);
+        return btnDef;
+      }
+
       function displayResult(data) {
         $('#forceBtn').hide();
         $('#forceNotifyBtn').hide();
         $('#statusTbl').hide();
         $("html,body").css("cursor", "progress");
 
+        var line = 0;
         var lines = []
+        var register = [];
         $.each(data['data'],function(url,details) {
           var bgr = "white";
           switch(details['result']) {
@@ -74,15 +86,37 @@
           var resCellCol = 'style="background-color: ' + bgr + '; font-weight: bold; color: white;"';
           var ssh = details['ssh'];
           if(undefined === ssh || null === ssh) {
-            ssh = '';
+            ssh = '-';
           }
-          lines.push('<tr class="ui-widget-content"><td class="ui-widget-content"><a href="' + url + '" target="_blank">' + url + '</td><td class="ui-widget-content" ' + resCellCol + '>' + details['result'] +'</td><td class="ui-widget-content">' + details['time'] +'</td><td class="ui-widget-content">' + details['message'] + '</td><td class="ui-widget-content">' + ssh +'</td></tr>');
+          var memory = details['memory']
+          memory = memory === undefined || memory === null ? '-' : memory;
+          var storage = details['file.system']
+          storage = storage === undefined || storage === null ? '-' : storage;
+          var logs = details['logs']
+          logs_cell = logs === undefined || logs === null ? '-' : addInfoBtn("logs_" + line);
+          lines.push('<tr class="ui-widget-content"><td class="ui-widget-content"><a href="' + url + '" target="_blank">' + url
+                     + '</td><td class="ui-widget-content" ' + resCellCol + '>' + details['result']
+                     + '</td><td class="ui-widget-content">' + details['time']
+                     + '</td><td class="ui-widget-content">' + details['message']
+                     + '</td><td class="ui-widget-content">' + ssh
+                     + '</td><td class="ui-widget-content">' + memory
+                     + '</td><td class="ui-widget-content">' + storage
+                     + '</td><td class="ui-widget-content">' + logs_cell
+                     + '</td></tr>');
+          if(logs !== undefined) {
+            register.push( "$('#logs_' + line).click(function() { console.log('here'); });" );
+          }
+          ++line;
         });
         var tblLines = lines.join("");
         $('#statusTbl tbody').find('tr').each(function() {
           $(this).remove();
         });
         $('#statusTbl tbody').append(tblLines);
+
+        for(i = 0; i < register.length; ++i) {
+          console.log(eval(register[i]));
+        }
 
         $("html,body").css("cursor", "auto");
         $('#forceBtn').show();

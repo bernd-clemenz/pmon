@@ -1,4 +1,5 @@
 #
+# -*- coding: utf-8-*-
 # Embedded web-server, publishes latest results
 # ans allows triggering a immediate rescan.
 #

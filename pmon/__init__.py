@@ -1,5 +1,6 @@
 #
-# Simple process monitor
+# -*- coding: utf-8-*-
+# Simple process monitor.
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 
