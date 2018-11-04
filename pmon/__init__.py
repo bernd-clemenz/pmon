@@ -9,12 +9,16 @@ import datetime
 import json
 import logging
 import logging.handlers
-from email.mime.text import MIMEText
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from string import Template
+
+import requests
+
 from pmon.srvr import PmonServer
 from pmon.ssh_sensor import PmonSensor
-import requests
-import smtplib
 
 name = 'pmon'
 
@@ -86,7 +90,7 @@ def __datetime_converter(o):
 
 def check_url(cfg_name):
     """
-    Do a GET query for url.
+    Do a GET query for url. part of the core of the application.
     :param cfg_name: name-part in config to read URL etc from
     :return:
     """
@@ -149,6 +153,105 @@ def __save_data():
             LOG.error(str(x))
 
 
+def __prepare_text_mail():
+    """
+    :return: a MimeText with the data als plain text
+    """
+    global LOG, CFG, THIS_RUN
+    LOG.debug("prepare text message")
+    text_msg = list()
+    text_data_template = Template("$result, $time, $message")
+    for url, details in THIS_RUN.items():
+        line = url + " | " + text_data_template.substitute(details)
+        text_msg.append(line)
+
+    text_out_msg = "ISC PMON process monitoring.\n" + "\n".join(text_msg)
+    return MIMEText(text_out_msg, 'plain')
+
+
+def __prepare_html_mail():
+    """
+    :return: the status as HTML message
+    """
+    global LOG, CFG, THIS_RUN
+    LOG.debug("prepare html message")
+    html_data_line = Template('<tr><td><a href="$url" target="_blank">$url</a></td>$details</tr>')
+    html_data_template_ok = Template(
+        '<td style="text-align: center; color: #4CAF50; font-weight: bold;">$result</td><td>$time</td><td>$message</td>')
+    html_data_template_fail = Template(
+        '<td style="text-align: center; color: #FF0000; font-weight: bold;">$result</td><td>$time</td><td>$message</td>')
+
+    html_lines = list()
+    for url, details in THIS_RUN.items():
+        if details['result'] == 'SUCCESS':
+            html_details = html_data_template_ok.substitute(details)
+        else:
+            html_details = html_data_template_fail.substitute(details)
+        line_data = {'url': url, 'details': html_details}
+        html_lines.append(html_data_line.substitute(line_data))
+
+    html_inner = '\n'.join(html_lines)
+    html_outer = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>process status</title>
+      <style>
+        body {{
+        font-family: Verdana, Sans-Serif;
+        font-size: small;
+      }}
+        table {{
+          border-collapse: collapse;
+       }}
+        table, th, td {{
+          border: 1px solid black;
+          margin: 5px;
+          padding-left: 5px;
+          padding-right: 5px;
+        }}
+        tr:nth-child(even) {{background-color: #f2f2f2;}}
+        tr:hover {{background-color: #e1e1e1;}}
+        th {{
+          background-color: #4CAF50;
+          color: white;
+      }}
+      </style>
+    </head>
+    <body>
+      <h3>ISC PMON process monitoring</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th><th>Status</th><th>Time</th><th>Message</th>
+          </tr>
+          {0}
+        </thead>
+      </table>
+      <p style="text-align: center; font-size: xx-small;">
+        &copy; 2018 ISC Clemenz &amp; Weinbrecht GmbH
+      </p>
+    </body>
+    </html>
+    '''.strip().format(html_inner)
+    return MIMEText(html_outer, 'html')
+
+
+def __prepare_message_parts():
+    """
+    :return: a combined MIME multipart message
+    """
+    global LOG, CFG, THIS_RUN
+    LOG.debug("prepare multipart mail message")
+    mail_msg = MIMEMultipart('alternative')
+    mail_msg['Subject'] = 'Monitored processes on {}'.format(CFG['pmon']['id'])
+    mail_msg['From'] = CFG.get('email', 'from')
+    mail_msg['To'] = CFG.get('email', 'to')
+    mail_msg.attach(__prepare_text_mail())
+    mail_msg.attach(__prepare_html_mail())
+    return mail_msg
+
+
 def notify():
     """
     Send email notifications to configured users.
@@ -156,11 +259,9 @@ def notify():
     global LOG, CFG, THIS_RUN
     LOG.info('Notifying user(s)')
 
-    msg_text = json.dumps(THIS_RUN, indent=2, sort_keys=True, default=__datetime_converter)
-    msg = MIMEText(msg_text)
-    msg['From'] = CFG.get('email', 'from')
-    msg['To'] = CFG.get('email', 'to')
-    msg['Subject'] = 'Monitored processes on {}'.format(CFG['pmon']['id'])
+    # msg_text = json.dumps(THIS_RUN, indent=2, sort_keys=True, default=__datetime_converter)
+    msg = __prepare_message_parts()  # MIMEText(msg_text)
+
     s = smtplib.SMTP(CFG.get('email', 'server'), int(CFG.get('email', 'port')))
     LOG.debug("Mail server connected")
     try:

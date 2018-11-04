@@ -1,0 +1,22 @@
+{
+  "http://192.168.1.11/blubber": {
+    "message": "HTTPConnectionPool(host='192.168.1.11', port=80): Max retries exceeded with url: /blubber (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001BAC6D07BA8>, 'Connection to 192.168.1.11 timed out. (connect timeout=5)'))",
+    "result": "EXCEPTION_ERROR",
+    "time": "2018-08-31 13:37:04.286812"
+  },
+  "http://invalid.url.io": {
+    "message": "HTTPConnectionPool(host='invalid.url.io', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BAC6D07518>: Failed to establish a new connection: [Errno 11002] getaddrinfo failed'))",
+    "result": "EXCEPTION_ERROR",
+    "time": "2018-08-31 13:37:03.718810"
+  },
+  "https://www.isc-kiwi.de": {
+    "message": "OK",
+    "result": "SUCCESS",
+    "time": "2018-08-31 13:37:03.481653"
+  },
+  "https://www.isc-kiwi.de/invalid-file.html": {
+    "message": 404,
+    "result": "APPLICATION_ERROR",
+    "time": "2018-08-31 13:37:04.086992"
+  }
+}
