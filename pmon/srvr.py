@@ -1,13 +1,14 @@
 #
 # -*- coding: utf-8-*-
 # Embedded web-server, publishes latest results
-# ans allows triggering a immediate rescan.
+# and allows triggering a immediate rescan.
 #
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 
-import cherrypy
 import json
+
+import cherrypy
 
 
 class PmonServer(object):

@@ -88,12 +88,7 @@ def __datetime_converter(o):
         return o.__str__()
 
 
-def check_url(cfg_name):
-    """
-    Do a GET query for url. part of the core of the application.
-    :param cfg_name: name-part in config to read URL etc from
-    :return:
-    """
+def __http_scan(cfg_name):
     global LOG, CFG, DATA, THIS_RUN
     url = CFG['urls'][cfg_name]
     LOG.info("Checking url: " + url)
@@ -128,6 +123,31 @@ def check_url(cfg_name):
         DATA[url] = url_lines
 
     THIS_RUN[url] = record
+
+
+def __check_ssh(cfg_name):
+    global LOG, CFG, DATA, THIS_RUN
+    record = dict()
+    try:
+        with PmonSensor(LOG, CFG, cfg_name, record) as ssh_sensor:
+            ssh_sensor.scan_mysql()
+    except Exception as x:
+        record['result'] = 'EXCEPTION_ERROR'
+        record['message'] = str(x)
+
+
+def check_url(cfg_name):
+    """
+    Do a GET query for url. part of the core of the application.
+    :param cfg_name: name-part in config to read URL etc from
+    :return:
+    """
+    global LOG, CFG, DATA, THIS_RUN
+    url = CFG['urls'][cfg_name]
+    if url.startswith('http'):
+        __http_scan(cfg_name)
+    elif url.startswith('mysql'):
+        __check_ssh(cfg_name)
 
 
 def __save_data():
@@ -247,6 +267,7 @@ def __prepare_message_parts():
     mail_msg['Subject'] = 'Monitored processes on {}'.format(CFG['pmon']['id'])
     mail_msg['From'] = CFG.get('email', 'from')
     mail_msg['To'] = CFG.get('email', 'to')
+    # Last entry ist the preferred one to display
     mail_msg.attach(__prepare_text_mail())
     mail_msg.attach(__prepare_html_mail())
     return mail_msg
@@ -281,7 +302,7 @@ def execute_scan(nomail_flag):
     """
     Does the main work of working through the URL-list.
     :param nomail_flag: value of the flag
-    :return:
+    :return: None
     """
     global LOG, CFG, THIS_RUN
     LOG.debug('scan ... ')

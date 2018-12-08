@@ -5,6 +5,7 @@
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 import urllib.parse
+
 from paramiko import client
 
 
@@ -18,13 +19,16 @@ class PmonSensor(object):
         :param cfg:  current configuration
         :param url_key: config-key
         :param record: data container
-        :return:
+        :return: None
         """
-        with PmonSensor(log, cfg, url_key, record) as sensor:
-            sensor.scan_cmd()
-            sensor.df_size()
-            sensor.mem()
-            sensor.scan_logs()
+        try:
+            with PmonSensor(log, cfg, url_key, record) as sensor:
+                sensor.scan_cmd()
+                sensor.df_size()
+                sensor.mem()
+                sensor.scan_logs()
+        except Exception as x:
+            log.error("All ssh-sensors: " + str(x))
 
     """
     Reading some OS data via SSH from the target system.
@@ -41,21 +45,22 @@ class PmonSensor(object):
         Constructor.
         :param log: the logger
         :param cfg: configuration data
-        :param url_key: which url ti use from configuration
+        :param url_key: which url to use from configuration
         :param record: data container
         """
         self.cfg = cfg
         self.log = log
         self.url_key = url_key
         self.record = record
-        self.__connect()
 
     def __enter__(self):
         """
-        Allow use of 'with'
+        Allow use of 'with', connects with remote system
         :return: self
         """
-        return self
+        if self.__connect():
+            return self
+        raise Exception("Failed to connect")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
@@ -88,10 +93,11 @@ class PmonSensor(object):
     def __connect(self):
         """
         Create a ssh client and store it in member variable.
-        :return:
+        :return: True if connected, otherwise False
         """
         if not self.__check() or self.clnt is not None:
-            return
+            return False
+
         url = self.cfg['urls'][self.url_key]
         parsed = urllib.parse.urlparse(url)
         host = parsed.netloc
@@ -103,6 +109,7 @@ class PmonSensor(object):
                           password=self.cfg['remote'][self.url_key + '.pwd'],
                           look_for_keys=False)
         self.log.debug("SSH sensor connected")
+        return True
 
     def close(self):
         if self.clnt is not None:
@@ -153,7 +160,7 @@ class PmonSensor(object):
                 self.log.info('Unsupported connection type: ' + con_type)
                 return False
         else:
-            self.log.warning('No type entry')
+            self.log.warning('No type entry: ' + self.url_key)
             return False
 
     def df_size(self):
@@ -200,6 +207,23 @@ class PmonSensor(object):
         else:
             self.log.error('No remote scan result')
             self.__add_to_ssh_message('no ps result at all')
+
+    def scan_mysql(self):
+        self.log.info("Executing configured command")
+        command = self.cfg['remote'][self.url_key + '.scan_cmd']
+        if command is None or command == '':
+            self.log.warn('No scan_cmd defined to scan for: ' + self.url_key)
+            self.__add_to_ssh_message('no scan_cmd configured')
+            return
+        result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
+        if 'mysqld is alive' in result:
+            self.log.info("Check succeeded")
+            self.record['result'] = 'SUCCESS'
+            self.record['message'] = 'OK'
+        else:
+            self.log.warning("Check failed with status: " + result)
+            self.record['result'] = 'APPLICATION_ERROR'
+            self.record['message'] = result
 
     def scan_logs(self):
         """
