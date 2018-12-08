@@ -127,13 +127,16 @@ def __http_scan(cfg_name):
 
 def __check_ssh(cfg_name):
     global LOG, CFG, DATA, THIS_RUN
+    url = CFG['urls'][cfg_name]
     record = dict()
+    record['time'] = datetime.datetime.now()
     try:
         with PmonSensor(LOG, CFG, cfg_name, record) as ssh_sensor:
             ssh_sensor.scan_mysql()
     except Exception as x:
         record['result'] = 'EXCEPTION_ERROR'
         record['message'] = str(x)
+    THIS_RUN[url] = record
 
 
 def check_url(cfg_name):

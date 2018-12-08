@@ -114,6 +114,7 @@ is also dynamic.
     [urls]
     url.1 = https://some-valid-url.io
     url.2 = http://invalid.url.io
+    url.3 = mysql://some-ip
     
     [remote]
     url.2.user = pi
@@ -121,6 +122,10 @@ is also dynamic.
     url.2.process = python com_srv.py
     url.2.scan_cmd = sudo ps aux
     url.2.type = ssh
+    url.3.user = pi
+    url.3.pwd = blubber1234
+    url.3.type = ssh
+    url.3.scan_cmd = sudo mysqladmin ping
     
 ## Result
 Every execution adds to the URL-named lists. The result codes are:
@@ -155,7 +160,12 @@ The rest of the entries are self-explanatory.
             "result": "APPLICATION_ERROR",
             "time": "2018-07-17 00:16:55.263712"
         }
-    ]
+    ],
+    "mysql://192.168.1.11": {
+      "message": "OK",
+      "result": "SUCCESS",
+      "time": "2018-12-08 16:16:36.838626"
+  }
 }
 ```
 
