@@ -192,3 +192,4 @@ source venv/Scripts/activate
 * [jQuery](https://www.jquery.com)
 * [jQueryUI](https://www.jqueryui.com)
 * [0MQ](http://blog.pythonisito.com/2012/08/distributed-systems-with-zeromq.html)
+* [Java 0MQ/jeroMQ](https://github.com/zeromq/jeromq)
