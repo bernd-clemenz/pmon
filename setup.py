@@ -28,6 +28,7 @@ setuptools.setup(
         "argparse",
         "requests",
         "paramiko",
-        "cherrypy"
+        "cherrypy",
+        "pyzmq"
     )
 )

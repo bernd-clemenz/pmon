@@ -191,3 +191,4 @@ source venv/Scripts/activate
 * [Cherrypy](https://docs.cherrypy.org)
 * [jQuery](https://www.jquery.com)
 * [jQueryUI](https://www.jqueryui.com)
+* [0MQ](http://blog.pythonisito.com/2012/08/distributed-systems-with-zeromq.html)
