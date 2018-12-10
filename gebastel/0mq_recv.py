@@ -16,7 +16,7 @@ context = zmq.Context(1)
 try:
     sock = context.socket(zmq.REP)
     try:
-        sock.connect('tcp://*:7777')
+        sock.connect('tcp://0.0.0.0:7777')
 
         go_on = True
 
