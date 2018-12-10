@@ -1,6 +1,9 @@
 #
 # -*- coding: utf-8-*-
 # Herumgebastel mit 0MQ
+# This code is the responder an an will implement the
+# reactions to the requests, in cas of pmon some error-handling
+# strategies.
 #
 
 import zmq
@@ -16,7 +19,7 @@ context = zmq.Context(1)
 try:
     sock = context.socket(zmq.REP)
     try:
-        sock.connect('tcp://0.0.0.0:7777')
+        sock.bind('tcp://*:7777')
 
         go_on = True
 
