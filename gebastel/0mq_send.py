@@ -5,17 +5,22 @@
 
 import zmq
 
-context = zmq.Context.instance()
+context = zmq.Context(1)
+try:
+    sock = context.socket(zmq.REQ)
+    try:
+        sock.bind('tcp://192.168.100.63:7777')
 
-sock = context.socket(zmq.REQ)
-sock.bind('tcp://*:7777')
+        sock.send_string('hello')
+        response = sock.recv()
 
-sock.send_string('hello')
-response = sock.recv()
+        print(response)
 
-print(response)
+        sock.send_string('stop')
+        response = sock.recv()
 
-sock.send_string('stop')
-response = sock.recv()
-
-print(response)
+        print(response)
+    finally:
+        sock.close()
+finally:
+    context.term()

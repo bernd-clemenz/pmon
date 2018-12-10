@@ -12,15 +12,20 @@ def handle_message(msg):
 
 
 # --------------------------------------------------------------------------------------------
-context = zmq.Context.instance()
+context = zmq.Context(1)
+try:
+    sock = context.socket(zmq.REP)
+    try:
+        sock.connect('tcp://*:7777')
 
-sock = context.socket(zmq.REP)
-sock.connect('tcp://127.0.0.1:7777')
+        go_on = True
 
-go_on = True
-
-while go_on:
-    message = sock.recv()
-    response = handle_message(message)
-    go_on = True if message != b'stop' else False
-    sock.send_string(response)
+        while go_on:
+            message = sock.recv()
+            response = handle_message(message)
+            go_on = True if message != b'stop' else False
+            sock.send_string(response)
+    finally:
+        sock.close()
+finally:
+    context.term()
