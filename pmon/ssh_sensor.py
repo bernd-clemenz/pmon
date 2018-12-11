@@ -108,7 +108,7 @@ class PmonSensor(object):
                           username=self.cfg['remote'][self.url_key + '.user'],
                           password=self.cfg['remote'][self.url_key + '.pwd'],
                           look_for_keys=False)
-        self.log.debug("SSH sensor connected")
+        self.log.debug("SSH sensor connected: {0}".format(host))
         return True
 
     def close(self):
@@ -124,6 +124,21 @@ class PmonSensor(object):
         :param command: the command to issue
         :return: output of the command
         """
+
+        def __read_stream(stream):
+            while not stream.channel.exit_status_ready():
+                if stream.channel.recv_ready():
+                    all_data = stream.channel.recv(1024)
+                    prev_data = b"1"
+                    while prev_data:
+                        prev_data = stream.channel.recv(1024)
+                        all_data += prev_data
+
+                    if all_data is not None:
+                        all_data = all_data.decode('utf-8').strip()
+
+                    return all_data
+
         if not self.clnt:
             self.log.error('Not connected')
             self.__add_to_ssh_message('Not connected')
@@ -132,16 +147,12 @@ class PmonSensor(object):
         self.log.debug("Executing command: {0}".format(command))
         try:
             stdin, stdout, stderr = self.clnt.exec_command(command)
-            while not stdout.channel.exit_status_ready():
-                if stdout.channel.recv_ready():
-                    alldata = stdout.channel.recv(1024)
-                    prevdata = b"1"
-                    while prevdata:
-                        prevdata = stdout.channel.recv(1024)
-                        alldata += prevdata
+            all_data = __read_stream(stdout)
 
-                    return str(alldata, 'utf-8')
+            self.log.debug(all_data)
+            return all_data
         except Exception as x:
+            self.log.error(str(x))
             self.__add_to_ssh_message(str(x))
 
     def __check(self):
@@ -209,12 +220,12 @@ class PmonSensor(object):
             self.__add_to_ssh_message('no ps result at all')
 
     def scan_mysql(self):
-        self.log.info("Executing configured command")
         command = self.cfg['remote'][self.url_key + '.scan_cmd']
         if command is None or command == '':
             self.log.warn('No scan_cmd defined to scan for: ' + self.url_key)
             self.__add_to_ssh_message('no scan_cmd configured')
             return
+        self.log.info("Executing configured command")
         result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
         if 'mysqld is alive' in result:
             self.log.info("Check succeeded")
