@@ -2,16 +2,23 @@
 # -*- coding: utf-8-*-
 # Herumgebastel mit 0MQ
 # This code is the responder an an will implement the
-# reactions to the requests, in cas of pmon some error-handling
+# reactions to the requests, in case of pmon some error-handling
 # strategies.
 #
 
+import json
 import zmq
 
 
+def read_message(msg):
+    _msg = msg.decode('utf-8')
+    return json.loads(_msg)
+
+
 def handle_message(msg):
-    print(msg)
-    return "done."
+    if msg is None:
+        return "none"
+    return "ack"
 
 
 # --------------------------------------------------------------------------------------------
@@ -24,9 +31,10 @@ try:
         go_on = True
 
         while go_on:
-            message = sock.recv()
+            message = read_message(sock.recv())
+            print(message)
             response = handle_message(message)
-            go_on = True if message != b'stop' else False
+            go_on = True if message['msg'] != 'stop' else False
             sock.send_string(response)
     finally:
         sock.close()
