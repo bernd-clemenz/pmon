@@ -1,6 +1,6 @@
 #
 # -*- coding: utf-8-*-
-# Simple process monitor.
+# Simple process monitor core functions.
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 

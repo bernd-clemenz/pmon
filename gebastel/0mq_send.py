@@ -1,12 +1,13 @@
 #
 # -*- coding: utf-8-*-
 # Herumgebastel mit 0MQ
-# This code will be reporting events to the resonse machine
+# This code will be reporting events to the response machine
 #
 
 import json
-import time
 import socket
+import time
+
 import zmq
 
 

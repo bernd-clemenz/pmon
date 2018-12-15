@@ -1,28 +1,46 @@
 #
 # -*- coding: utf-8-*-
-# Entry point of the simple HTTP process monitor.
+# Entry point of the simple process monitor.
 # (c) ISC Clemenz & Weinbrecht GmbH 2018
 #
 
 import argparse
-import cherrypy
 import os
-import pmon
-from pmon.srvr import PmonServer
 import sys
 
+import cherrypy
+
+import pmon
+from pmon.srvr import PmonServer
+from pmon.zmq_responder import ZmqResponder
 
 if __name__ == '__main__':
-    # 1. Define arguments and read commandline
-    parser = argparse.ArgumentParser(description="Simple process monitor")
-    parser.add_argument('--conf', type=str, default='pmon.ini')
-    parser.add_argument('--server', type=bool, default=False)
-    parser.add_argument('--nomail', type=bool, default=False)
+    # Define arguments and read commandline
+    parser = argparse.ArgumentParser(description="Simple process monitor.")
+    parser.add_argument('--conf',
+                        type=str,
+                        default='pmon.ini',
+                        help="the configuration file in INI-format")
+    parser.add_argument('--server',
+                        type=bool,
+                        default=False,
+                        help="Start the HTTP server. Exclusive parameter.")
+    parser.add_argument('--nomail',
+                        type=bool,
+                        default=False,
+                        help="Send no mail if set")
+    parser.add_argument('--responder',
+                        type=bool,
+                        default=False,
+                        help='Start the 0MQ based responder. Exclusive parameter.')
     args = parser.parse_args()
 
     pmon.init(args.conf)
     
     if args.server:
+        #
+        # Launching the HTTP server
+        #
         cherrypy.server.socket_host = pmon.CFG['pmon']['http.bind']
         cherrypy.server.socket_port = int(pmon.CFG['pmon']['http.port'])
         conf = {'/': {
@@ -35,8 +53,14 @@ if __name__ == '__main__':
                            }
                }
         cherrypy.quickstart(PmonServer(pmon.LOG, pmon.CFG, args.nomail, pmon.execute_scan), '/', conf)
+    elif args.responder:
+        #
+        # Launching the ZMQ responder
+        #
+        with ZmqResponder() as responder:
+            responder.respond()
     else:
-        # 2. process the checks
+        # Process the checks
         pmon.execute_scan(args.nomail)
         pmon.LOG.info("done.")
 
