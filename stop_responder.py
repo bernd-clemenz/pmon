@@ -3,22 +3,33 @@
 # Stop ZMQ responder.
 
 import argparse
+import datetime
+import json
 import socket
-import time
 
 import zmq
 
 import pmon
 
 
+def datetime_converter(o):
+    """
+    Converter for JSON output
+    :param o: value to convert to a string
+    :return: string representation of the value
+    """
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
+
 def create_message(msg, msg_type):
     """
     General notification factory.
     :param msg: the text content of the message
-    :param msg_type: the typeindicator
+    :param msg_type: the type-indicator
     :return: dictionary with message data
     """
-    return {'created.ms': int(round(time.time() * 1000)),
+    return {'created': datetime.datetime.now(),
             'msg.type': msg_type,
             'msg': msg,
             'from': socket.gethostname()}
@@ -42,7 +53,9 @@ if __name__ == '__main__':
             sckt.setsockopt(zmq.LINGER, 100)
             connection_str = "tcp://127.0.0.1:{0}".format(pmon.CFG['pmon']['zmq.port'])
             sckt.connect(connection_str)
-            sckt.send_json(create_message('stop', 'INTERNAL'), zmq.DONTWAIT)
+            sckt.send_string(json.dumps(create_message('stop', 'INTERNAL'),
+                                        default=datetime_converter),
+                             zmq.DONTWAIT)
         finally:
             sckt.close()
     finally:

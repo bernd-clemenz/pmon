@@ -61,7 +61,8 @@ class ZmqResponder(object):
         go_on = True
         while go_on:
             message = self._read_message()
-            self.log.debug("Message type: {0}".format(message['msg.type']))
+            self.log.debug("Message: {0}, {1}".format(message['msg.type'],
+                                                      message['msg']))
             go_on = True if message['msg'] != 'stop' else False
             self.socket.send_string('ACK')
             if go_on:
