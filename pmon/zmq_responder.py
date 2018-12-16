@@ -8,6 +8,7 @@
 
 import json
 
+import requests
 import zmq
 
 import pmon
@@ -55,7 +56,13 @@ class ZmqResponder(object):
     def _report_message_to_slack(self, message):
         self.log.debug("Forwarding message to slack")
         url = self.cfg['pmon']['slack.hook']
+        payload = json.dumps({'text': message['msg']})
+        headers = {'Accept': 'application/json',
+                   'Content-Type': 'application/json',
+                   'Content-Encoding': 'utf8',
+                   'Content-Length': str(len(payload))}
 
+        rsp = requests.post(url, data=payload, headers=headers, verify=False)
 
     def respond(self):
         go_on = True
