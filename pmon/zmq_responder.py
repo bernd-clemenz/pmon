@@ -61,8 +61,12 @@ class ZmqResponder(object):
                    'Content-Type': 'application/json',
                    'Content-Encoding': 'utf8',
                    'Content-Length': str(len(payload))}
-
-        rsp = requests.post(url, data=payload, headers=headers, verify=False)
+        try:
+            rsp = requests.post(url, data=payload, headers=headers)
+            if rsp.status_code != requests.codes.ok:
+                self.log.warn("problem sending to slack: {0}".format(rsp.status_code))
+        except Exception as x:
+            self.log.error(str(x))
 
     def respond(self):
         go_on = True
