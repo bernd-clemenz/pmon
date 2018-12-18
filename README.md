@@ -184,6 +184,16 @@ cd YOUR_PROJECT_HOME
 source venv/Scripts/activate
 ```
 
+## 0MQ responder
+With the parameter --responder=True a ver simple 0MQ listener of type REQ is
+launched. It receives messages and can perform some action according to the
+messages. The simplest one is forwardgin the content to a 'incoming Slack-Webhook'.
+I found this particular useful for a simple lightwight and asynchronous
+notification system. The resonder goes beyond the idea of a simple
+monitoring system it allows actions some, getting more like Salt, but
+with a limited scope. However, it requires an active sender, something like
+an monitoring-agent.   
+
 ## Additional sources
 * [Paramiko](http://www.paramiko.org/)
 * [Requests](http://docs.python-requests.org/en/master/)
