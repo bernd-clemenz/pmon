@@ -53,10 +53,31 @@ class ZmqResponder(object):
         _msg = msg.decode('utf-8')
         return json.loads(_msg)
 
+    @staticmethod
+    def _make_slack_payload(message):
+        slack_payload = dict()
+        slack_payload['text'] = message['msg']
+        attachments = list()
+        slack_payload['attachments'] = attachments
+
+        attachment = dict()
+        attachment["fallback"] = message['msg']
+        attachment['text'] = message['msg']
+        attachment['title'] = message['msg.type']
+        attachment['author_name'] = message['from']
+
+        attachments.append(attachment)
+        return slack_payload
+
     def _report_message_to_slack(self, message):
+        """
+        Send a message to Slack Web-Hook.
+        :param message: the message record to be send to slack
+        :return:  None
+        """
         self.log.debug("Forwarding message to slack")
         url = self.cfg['pmon']['slack.hook']
-        payload = json.dumps({'text': message['msg']})
+        payload = json.dumps(self._make_slack_payload(message))
         headers = {'Accept': 'application/json',
                    'Content-Type': 'application/json',
                    'Content-Encoding': 'utf8',
@@ -74,7 +95,9 @@ class ZmqResponder(object):
             message = self._read_message()
             self.log.debug("Message: {0}, {1}".format(message['msg.type'],
                                                       message['msg']))
-            go_on = True if message['msg'] != 'stop' else False
             self.socket.send_string('ACK')
-            if go_on:
+            try:
                 self._report_message_to_slack(message)
+            except Exception as x:
+                self.log.error(str(x))
+            go_on = True if message['msg'] != 'stop' else False
