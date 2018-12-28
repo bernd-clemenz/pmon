@@ -10,6 +10,7 @@ queried. The results are stored in a JSON data file. This file
 is updated in subsequent executions.
 Other later added (pseudo-)protocols are processed in the same
 manner (mysql, ssh).
+Keeo in mind, _Python_ stands here always for **Python3**.
 
 ## Requirements
 - Python 3 installed. [Python](http://www.python.org)
@@ -33,7 +34,7 @@ the directory with **pmon** files and executing
 
     python setup.py install
     
-After installation it can be executed with the command
+After installation it can be executed with the command:
 
     python -m pmon [--conf=full-config-file-name] [--server=(True|False)] [--nomail=(True|False)]
     
@@ -50,6 +51,7 @@ switching to the directory and executing:
 |------|-------------|
 | conf | name of the configuration file |
 | server | flag to start the internal HTTP server |
+| responder | flag to start the internal 0MQ responder |
 | nomail | flag to send **no** mail after processing | 
 
 ### Automated execution via 'cron'
@@ -175,7 +177,7 @@ The rest of the entries are self-explanatory.
 }
 ```
 
-## Remote operations
+## Complex remote operations
 The module can also perform some simple remote data digging, if access is configured.
 For more complex things it's recommended to use tools like [Salt](http://www.saltstack.com).
 
