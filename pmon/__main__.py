@@ -36,6 +36,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     pmon.init(args.conf)
+
+    if args.server and args.responder:
+        pmon.LOG.error("Whether server OR responder is allowed")
+        sys.exit(1)
     
     if args.server:
         #

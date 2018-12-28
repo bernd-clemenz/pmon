@@ -8,6 +8,8 @@ addresses.
 Very simple: a series of URLs for GET requests is defined and
 queried. The results are stored in a JSON data file. This file
 is updated in subsequent executions.
+Other later added (pseudo-)protocols are processed in the same
+manner (mysql, ssh).
 
 ## Requirements
 - Python 3 installed. [Python](http://www.python.org)
@@ -34,6 +36,10 @@ the directory with **pmon** files and executing
 After installation it can be executed with the command
 
     python -m pmon [--conf=full-config-file-name] [--server=(True|False)] [--nomail=(True|False)]
+    
+Running the 0MQ responder:
+
+    python -m pmon [--conf=full-config-file-name] [--responder=(True|False)] [--nomail=(True|False)]
     
 If one does not want to install it, it can be run just by
 switching to the directory and executing:
@@ -188,7 +194,7 @@ source venv/Scripts/activate
 With the parameter --responder=True a ver simple 0MQ listener of type REQ is
 launched. It receives messages and can perform some action according to the
 messages. The simplest one is forwarding the content to a 'incoming Slack-Webhook'.
-I found this particular useful for a simple lightwight and asynchronous
+I found this particular useful for a simple lightweight and asynchronous
 notification system. The responder goes beyond the idea of a simple
 monitoring system it allows actions some, getting more like Salt, but
 with a limited scope. However, it requires an active sender, something like
@@ -202,4 +208,5 @@ an monitoring-agent.
 * [jQuery](https://www.jquery.com)
 * [jQueryUI](https://www.jqueryui.com)
 * [0MQ](http://blog.pythonisito.com/2012/08/distributed-systems-with-zeromq.html)
+* [0MQ client/server](https://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/patterns/client_server.html)
 * [Java 0MQ/jeroMQ](https://github.com/zeromq/jeromq)
