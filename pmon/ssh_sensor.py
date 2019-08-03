@@ -128,16 +128,16 @@ class PmonSensor(object):
         def __read_stream(stream):
             while not stream.channel.exit_status_ready():
                 if stream.channel.recv_ready():
-                    all_data = stream.channel.recv(1024)
+                    all_data_buffer = stream.channel.recv(1024)
                     prev_data = b"1"
                     while prev_data:
                         prev_data = stream.channel.recv(1024)
-                        all_data += prev_data
+                        all_data_buffer += prev_data
 
-                    if all_data is not None:
-                        all_data = all_data.decode('utf-8').strip()
+                    if all_data_buffer is not None:
+                        all_data_buffer = all_data_buffer.decode('utf-8').strip()
 
-                    return all_data
+                    return all_data_buffer
 
         if not self.clnt:
             self.log.error('Not connected')
@@ -243,9 +243,7 @@ class PmonSensor(object):
             self.__add_to_ssh_message('no scan_cmd configured')
             return
         self.log.debug("Executing configured command")
-        result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
-
-
+        return self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
 
     def scan_ps(self):
         command = self.cfg['remote'][self.url_key + '.scan_cmd']
@@ -263,7 +261,6 @@ class PmonSensor(object):
             self.log.warning("Check failed with status: " + result)
             self.record['result'] = 'APPLICATION_ERROR'
             self.record['message'] = result
-
 
     def scan_logs(self):
         """
