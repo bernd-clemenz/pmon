@@ -236,6 +236,35 @@ class PmonSensor(object):
             self.record['result'] = 'APPLICATION_ERROR'
             self.record['message'] = result
 
+    def _scan_core(self):
+        command = self.cfg['remote'][self.url_key + '.scan_cmd']
+        if command is None or command == '':
+            self.log.warn('No scan_cmd defined to scan for: ' + self.url_key)
+            self.__add_to_ssh_message('no scan_cmd configured')
+            return
+        self.log.debug("Executing configured command")
+        result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
+
+
+
+    def scan_ps(self):
+        command = self.cfg['remote'][self.url_key + '.scan_cmd']
+        if command is None or command == '':
+            self.log.warn('No scan_cmd defined to scan for: ' + self.url_key)
+            self.__add_to_ssh_message('no scan_cmd configured')
+            return
+        self.log.info("Executing configured command")
+        result = self.__ssh_command(self.cfg['remote'][self.url_key + '.scan_cmd'])
+        if 'mysqld is alive' in result:
+            self.log.info("Check succeeded")
+            self.record['result'] = 'SUCCESS'
+            self.record['message'] = 'OK'
+        else:
+            self.log.warning("Check failed with status: " + result)
+            self.record['result'] = 'APPLICATION_ERROR'
+            self.record['message'] = result
+
+
     def scan_logs(self):
         """
         Scan log files using grep on remote machine

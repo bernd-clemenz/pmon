@@ -125,7 +125,7 @@ def __http_scan(cfg_name):
     THIS_RUN[url] = record
 
 
-def __check_ssh(cfg_name):
+def __check_ssh_mysql(cfg_name):
     global LOG, CFG, DATA, THIS_RUN
     url = CFG['urls'][cfg_name]
     LOG.info("Checking url: " + url)
@@ -140,6 +140,22 @@ def __check_ssh(cfg_name):
     THIS_RUN[url] = record
 
 
+def __check_ssh_ps(cfg_name):
+    global LOG, CFG, DATA, THIS_RUN
+    url = CFG['urls'][cfg_name]
+    LOG.info("Checking url: " + url)
+    record = dict()
+    record['time'] = datetime.datetime.now()
+    try:
+        with PmonSensor(LOG, CFG, cfg_name, record) as s:
+            s.scan_mysql()
+    except Exception as x:
+        record['result'] = 'EXCEPTION_ERROR'
+        record['message'] = str(x)
+    THIS_RUN[url] = record
+
+
+
 def check_url(cfg_name):
     """
     Do a GET query for url. part of the core of the application.
@@ -151,7 +167,9 @@ def check_url(cfg_name):
     if url.startswith('http'):
         __http_scan(cfg_name)
     elif url.startswith('mysql'):
-        __check_ssh(cfg_name)
+        __check_ssh_mysql(cfg_name)
+    elif url.startswith('ssh'):
+        __check_ssh_ps(cfg_name)
 
 
 def __save_data():
