@@ -3,6 +3,7 @@
 
 import urllib
 
+import keyring
 from paramiko import client
 
 
@@ -26,10 +27,11 @@ clnt.load_system_host_keys()
 clnt.set_missing_host_key_policy(client.AutoAddPolicy())
 clnt.connect(host,
              username='pi',
-             password='Max$Payn3',
+             password=keyring.get_password('url.1.ssh', 'pi'),
              look_for_keys=False)
 try:
-    stdin, stdout, stderr = clnt.exec_command('sudo mysqladmin ping -u root -pisc123isc')
+    cmd = 'sudo mysqladmin ping -u root -p{0}'.format(keyring.get_password('url.1.mysql', 'pi'))
+    stdin, stdout, stderr = clnt.exec_command(cmd)
     s_out = _read_stream(stdout)
     s_out = s_out.decode('utf-8').strip() if s_out is not None else None
     s_err = _read_stream(stderr)
