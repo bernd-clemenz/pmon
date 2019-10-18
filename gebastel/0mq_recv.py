@@ -7,6 +7,7 @@
 #
 
 import json
+
 import zmq
 
 
@@ -21,7 +22,6 @@ def handle_message(msg):
     return "ack"
 
 
-# --------------------------------------------------------------------------------------------
 context = zmq.Context(1)
 try:
     sock = context.socket(zmq.REP)
