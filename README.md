@@ -83,7 +83,7 @@ is also dynamic.
 | Name | Description |
 |------|-------------|
 | url.XX.user | Name of a remote user |
-| url.XX.pwd | Password |
+| url.XX.pwd | Password (since version 0.0.13 dropped for keyring reference. where serivce name and user name is url.XX) |
 | url.XX.process | string to search in command result |
 | url.XX.scan_cmd | command to produce process list |
 | url.XX.type | **ssh** only supported type in version 0.0.1 |
@@ -187,9 +187,9 @@ source venv/Scripts/activate
 ## 0MQ responder
 With the parameter --responder=True a ver simple 0MQ listener of type REQ is
 launched. It receives messages and can perform some action according to the
-messages. The simplest one is forwardgin the content to a 'incoming Slack-Webhook'.
-I found this particular useful for a simple lightwight and asynchronous
-notification system. The resonder goes beyond the idea of a simple
+messages. The simplest one is forwarding the content to a 'incoming Slack-Webhook'.
+I found this particular useful for a simple lightweight and asynchronous
+notification system. The responder goes beyond the idea of a simple
 monitoring system it allows actions some, getting more like Salt, but
 with a limited scope. However, it requires an active sender, something like
 an monitoring-agent.   
@@ -199,7 +199,13 @@ an monitoring-agent.
 * [Requests](http://docs.python-requests.org/en/master/)
 * [ps command](https://kb.iu.edu/d/afnv)
 * [Cherrypy](https://docs.cherrypy.org)
+* [Keyring](https://keyring.readthedocs.io/en/latest/)
 * [jQuery](https://www.jquery.com)
 * [jQueryUI](https://www.jqueryui.com)
 * [0MQ](http://blog.pythonisito.com/2012/08/distributed-systems-with-zeromq.html)
 * [Java 0MQ/jeroMQ](https://github.com/zeromq/jeromq)
+
+## Notes
+
+Keyring library issue:
+https://stackoverflow.com/questions/2325923/how-to-fix-importerror-no-module-named-error-in-python
