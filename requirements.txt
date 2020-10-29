@@ -1,0 +1,6 @@
+argparse
+keyring
+requests
+paramiko
+cherrypy
+pyzmq

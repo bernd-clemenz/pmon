@@ -113,9 +113,11 @@ class PmonSensor(object):
 
     def close(self):
         if self.clnt is not None:
-            self.clnt.close()
-            self.clnt = None
-            self.log.debug("SSH sensor connection closed")
+            try:
+                self.clnt.close()
+            finally:
+                self.clnt = None
+                self.log.debug("SSH sensor connection closed")
 
     def __ssh_command(self, command):
         """
