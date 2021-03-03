@@ -130,16 +130,16 @@ class PmonSensor(object):
         def __read_stream(stream):
             while not stream.channel.exit_status_ready():
                 if stream.channel.recv_ready():
-                    all_data = stream.channel.recv(1024)
+                    _all_data = stream.channel.recv(1024)
                     prev_data = b"1"
                     while prev_data:
                         prev_data = stream.channel.recv(1024)
-                        all_data += prev_data
+                        _all_data += prev_data
 
-                    if all_data is not None:
-                        all_data = all_data.decode('utf-8').strip()
+                    if _all_data is not None:
+                        _all_data = _all_data.decode('utf-8').strip()
 
-                    return all_data
+                    return _all_data
 
         if not self.clnt:
             self.log.error('Not connected')
